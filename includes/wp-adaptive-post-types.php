@@ -15,9 +15,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             add_action( 'init', array( $this, 'create_post_types' ) );  
             add_action( 'init', array( $this, 'add_custom_taxonomies' ) );    
             add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-            add_action( 'manage_node_posts_custom_column' , array ( $this, 'manage_node_posts_custom_column' ) ); 
-            add_action( 'save_post', array ( $this, 'save_metabox' ) );                
+            add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
             add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
+            add_action( 'save_post', array ( $this, 'save_metabox' ) );   
         }
 
      
@@ -73,7 +73,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     'labels' => array(
                         'name' => __( 'Node' ),
                         'singular_name' => __( 'Node' ),
-                        'menu_name' => __( 'Node' ),
+                        'menu_name' => __( 'Nodes' ),
                         'parent_item_colon' => __( 'Parent Node' ),
                         'edit_item' => __( 'Edit Node' ),
                         'new_item' => __( 'Add New Node' ),
@@ -93,8 +93,8 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     'exclude_from_search' => false,
                     'publicly_queryable' => true,
                     'capability_type' => 'post',
-                    'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
-                    'taxonomies' => array( 'expert-model-item', 'Difficulty' ),
+                    'supports' => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+                    'taxonomies' => array( 'expert-model-item' ),
                     'menu_icon' => 'dashicons-randomize'                    
         
                 )
@@ -111,6 +111,34 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
         public function add_metaboxes(){            
 
+            
+            // Object ID
+
+            add_meta_box( 
+                'wp_adaptive_object_id', 
+                'Object ID', 
+                'object_id_meta_box', 
+                'node', 
+                'normal'
+            ); 
+
+            
+            // Object Id callback
+
+            function object_id_meta_box() {                
+                
+                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                ?>
+                
+                <label for="wp_adaptive_object_id" style="display:none;">Object ID</label><br/>
+                <input type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">                   
+                
+                <?php
+
+            }
+
+            
             // Link
 
             add_meta_box( 
@@ -328,6 +356,10 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             if ( isset( $_POST[ 'wp_adaptive_difficulty' ] ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_difficulty', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty' ] ) );
             } 
+
+            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
+            } 
             
 
         }
@@ -340,25 +372,24 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
         
         // Add columns
         public function set_custom_edit_node_columns($columns) {
-
             
-            $columns['content_type'] = __( 'Content Type' );
-            $columns['difficulty'] = __( 'Difficulty' );            
+            $columns['wp_adaptive_content_type'] = __( 'Content Type' );
+            $columns['wp_adaptive_difficulty'] = __( 'Difficulty' );                      
             return $columns;
 
         }
 
         // Populate columns
-        public function manage_node_posts_custom_column( $column, $post_id ){
+        public function node_posts_custom_column( $column, $post_id ){
 
             switch ( $column ) {
 
-                case 'content_type' :
-                    echo get_post_meta( $post_id , 'content_type' , true );                     
+                case 'wp_adaptive_content_type' :
+                    echo get_post_meta( $post_id, 'wp_adaptive_content_type' )[0];                     
                     break;
         
-                case 'difficulty' :
-                    echo get_post_meta( $post_id , 'difficulty' , true ); 
+                case 'wp_adaptive_difficulty' :
+                    echo get_post_meta( $post_id, 'wp_adaptive_difficulty' )[0]; 
                     break;
         
             }
@@ -397,7 +428,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 'show_ui' => true,
                 'show_admin_column' => true,
                 'query_var' => true,
-                'rewrite' => array( 'slug' => 'topic' ),
+                'rewrite' => array( 'slug' => 'topic' ),                
+                'show_in_nav_menus' => true,
+                'show_in_menu' => true,
             ));
             
             
@@ -425,6 +458,8 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 'show_admin_column' => true,
                 'query_var' => true,
                 'rewrite' => array( 'slug' => 'node' ),
+                'show_in_menu' => true,
+                'show_in_nav_menus' => true,               
             ));
 
         }    

@@ -21,13 +21,31 @@ if ( !class_exists( 'WP_Adaptive_Admin' ) ) {
         // Admin page
         public function add_plugin_page()
         {
-            // Will appear as it's own menu option
+            
             add_menu_page(
                 'Settings Admin', 
                 'WP Adaptive', 
                 'manage_options', 
                 'wp-adaptive',                 
                 array( $this, 'create_admin_page' )
+            );
+
+            add_submenu_page(
+                'wp-adaptive', 
+                'Topics', 
+                'Topics (Taxonomy)', 
+                'edit_posts', 
+                'edit-tags.php?taxonomy=topics',
+                false 
+            );
+
+            add_submenu_page(
+                'wp-adaptive', 
+                'Expert Model Items', 
+                'Expert Model Items (Taxonomy)', 
+                'edit_posts', 
+                'edit-tags.php?taxonomy=expert-model-item',
+                false 
             );
         }
 
