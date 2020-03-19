@@ -17,6 +17,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
             add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
             add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
+            add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
+            add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );
+            
             add_action( 'save_post', array ( $this, 'save_metabox' ) );   
         }
 
@@ -306,7 +309,56 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             }
             
-            // Difficulty dropdown
+            
+             // Difficulty dropdown for assessment
+
+             add_meta_box( 
+                'wp_adaptive_difficulty_assessment', 
+                'Difficulty', 
+                'difficulty_meta_box_assessment', 
+                'assessment', 
+                'side', 
+                'low'
+            ); 
+
+            // Difficulty callback for assessment
+
+            function difficulty_meta_box_assessment( ) {
+                
+                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['1','1 - understand/remember'],  
+                    ['2','2 - apply/analyze'],  
+                    ['3','3 - create/evaluate'],  
+                     
+
+                ];
+
+                ?>
+
+                <label for="wp_adaptive_difficulty_assessment" style="display:none;">Difficulty</label><br/>
+                
+                <select name="wp_adaptive_difficulty_assessment" id="wp_adaptive_difficulty_assessment"> 
+                
+                    <?php   
+                    
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_difficulty_assessment', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?> 
+                
+                </select>
+                
+                <?php               
+
+            }
+            
+            
+            // Difficulty dropdown for node
 
             add_meta_box( 
                 'wp_adaptive_difficulty', 
@@ -317,7 +369,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 'low'
             ); 
 
-            // Difficulty callback
+            // Difficulty callback for node
 
             function difficulty_meta_box( ) {
                 
@@ -461,6 +513,10 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_difficulty', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty' ] ) );
             } 
 
+            if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_difficulty_assessment', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) );
+            } 
+
             if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
             }
@@ -499,7 +555,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
         ************************************/
         
         
-        // Add columns
+        // Add columns node
         public function set_custom_edit_node_columns($columns) {
             
             $columns['wp_adaptive_content_type'] = __( 'Content Type' );
@@ -508,7 +564,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
         }
 
-        // Populate columns
+        // Populate columns node
         public function node_posts_custom_column( $column, $post_id ){
 
             switch ( $column ) {
@@ -520,6 +576,34 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 case 'wp_adaptive_difficulty' :
                     echo get_post_meta( $post_id, 'wp_adaptive_difficulty' )[0]; 
                     break;
+        
+            }
+
+        }
+
+
+        // Add columns assessment
+        public function set_custom_edit_assessment_columns($columns) {
+            
+            
+            $columns['wp_adaptive_difficulty_assessment'] = __( 'Difficulty' );
+            $columns['content'] = __( 'Question' );                                    
+            return $columns;
+
+        }
+
+        // Populate columns assessment
+        public function assessment_posts_custom_column( $column, $post_id ){
+
+            switch ( $column ) {
+
+                case 'wp_adaptive_difficulty_assessment' :
+                    echo get_post_meta( $post_id, 'wp_adaptive_difficulty_assessment' )[0]; 
+                    break;
+                
+                case 'content' :
+                    echo get_post_field('post_content', $post_id);; 
+                    break;               
         
             }
 
