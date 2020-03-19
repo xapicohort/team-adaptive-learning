@@ -101,6 +101,42 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             );
 
+            
+            // Assessment
+            
+            register_post_type( 'assessment',
+                    
+                array(
+                    'labels' => array(
+                        'name' => __( 'Assessment' ),
+                        'singular_name' => __( 'Assessment' ),
+                        'menu_name' => __( 'Assessments' ),                        
+                        'edit_item' => __( 'Edit Assessment' ),
+                        'new_item' => __( 'Add New Assessment' ),
+                        'add_new_item' => __( 'Add New Assessment' )
+                    ),
+                    'public' => true,
+                    'has_archive' => true,
+                    'rewrite' => array('slug' => 'assessment'),
+                    'show_in_rest' => false,
+                    'description' => 'Assessments for adaptive learning for the WP Adaptive plugin.',
+                    'hierarchical' => false,                    
+                    'show_ui' => true,
+                    'show_in_menu' => 'wp-adaptive',
+                    'show_in_nav_menus' => true,
+                    'show_in_admin_bar' => true,                    
+                    'can_export' => true,                    
+                    'exclude_from_search' => false,
+                    'publicly_queryable' => true,
+                    'capability_type' => 'post',
+                    'supports' => array( 'title', 'editor', 'revisions' ),
+                    'taxonomies' => array( 'expert-model-item' ),
+                    'menu_icon' => 'dashicons-randomize'                    
+        
+                )
+
+            );
+
 
         }
 
@@ -291,7 +327,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             }
 
             
-            // Module dropdown
+            // Module dropdown for node
             
             add_meta_box( 
                 'content-parent', 
@@ -302,7 +338,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 'low'
             );            
             
-            // Module callback
+            // Module callback for node
             
             function content_attributes_meta_box( $post ) {
 
@@ -326,6 +362,43 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 }
 
             }
+
+            // Assessment optios for assessment
+
+            function assessment_options_meta_boxes(){
+
+                for( $i = 1; $i <= 5; $i++ ){
+
+                    add_meta_box( 
+                        'wp_adaptive_assessment_option_' . $i, 
+                        'Option ' . $i, 
+                        'assessment_options_meta_box', 
+                        'assessment', 
+                        'normal', 
+                        'low',
+                        array( $i )
+                    );  
+
+                }
+
+                function assessment_options_meta_box( $post, $args ){
+                    
+                    wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                    ?>
+
+                    <!-- DON'T SPACE TEXTAREA. WILL CREATE EXTRA SPACES AND LINE BREAKS  -->
+                    <textarea rows='4' cols='50' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'><?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true) : ""; ?></textarea><br><br>     
+                    <label for='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'>Correct </label>
+                    <input type='checkbox' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' value="Correct" <?php echo ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct', $single = true)) ? "checked" : ""; ?> >
+
+                    <?php
+
+                }
+
+            }
+
+            assessment_options_meta_boxes();
 
         }
 
@@ -359,7 +432,30 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
-            } 
+            }
+
+            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
+            }
+
+            
+            // Options for assessments
+
+            for( $i = 1; $i <= 5; $i++ ){
+
+                if ( isset( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) ) {
+                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i, trim( sanitize_text_field( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) ) );                
+                } 
+
+                if ( isset( $_POST[ 'wp_adaptive_assessment_option_' . $i . '_correct' ] ) ) {                    
+                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i . '_correct' , true);               
+                } else {
+                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i . '_correct' , false);  
+                }
+
+            }
+            
+            
             
 
         }
@@ -451,7 +547,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             );
            
              
-            register_taxonomy( 'expert-model-item', array( 'node' ), array(
+            register_taxonomy( 'expert-model-item', array( 'node', 'assessment' ), array(
                 'hierarchical' => true,
                 'labels' => $labels,
                 'show_ui' => true,
