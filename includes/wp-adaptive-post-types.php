@@ -56,7 +56,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     'exclude_from_search' => false,
                     'publicly_queryable' => true,
                     'capability_type' => 'post',
-                    'supports' => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+                    'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'revisions' ),
                     'taxonomies' => array( 'topic' ),
                     'menu_icon' => 'dashicons-randomize'                    
         
@@ -148,7 +148,34 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
         public function add_metaboxes(){            
 
             
-            // Object ID
+            // Object ID for module
+
+            add_meta_box( 
+                'wp_adaptive_object_id_module', 
+                'Object ID', 
+                'object_id_meta_box_module', 
+                'module', 
+                'normal'
+            ); 
+
+            
+            // Object Id callback for module
+
+            function object_id_meta_box_module() {                
+                
+                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                ?>
+                
+                <label for="wp_adaptive_object_id_module" style="display:none;">Object ID</label><br/>
+                <input type="text" name="wp_adaptive_object_id_module" id="wp_adaptive_object_id_module" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true) : ""; ?> ">                   
+                
+                <?php
+
+            }
+            
+            
+            // Object ID for node
 
             add_meta_box( 
                 'wp_adaptive_object_id', 
@@ -159,7 +186,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             ); 
 
             
-            // Object Id callback
+            // Object Id callback for node
 
             function object_id_meta_box() {                
                 
@@ -390,7 +417,11 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     <!-- DON'T SPACE TEXTAREA. WILL CREATE EXTRA SPACES AND LINE BREAKS  -->
                     <textarea rows='4' cols='50' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'><?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true) : ""; ?></textarea><br><br>     
                     <label for='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'>Correct </label>
-                    <input type='checkbox' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' value="Correct" <?php echo ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct', $single = true)) ? "checked" : ""; ?> >
+                    <input type='radio' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_correct' value='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' <?php if ( ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_correct', $single = true) ) == 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct' ) {
+                        echo "checked";
+                    } else {
+                        echo "";
+                    } ?> >
 
                     <?php
 
@@ -438,6 +469,10 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
             }
 
+            if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_object_id_module', sanitize_text_field( $_POST[ 'wp_adaptive_object_id_module' ] ) );
+            }
+
             
             // Options for assessments
 
@@ -447,11 +482,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i, trim( sanitize_text_field( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) ) );                
                 } 
 
-                if ( isset( $_POST[ 'wp_adaptive_assessment_option_' . $i . '_correct' ] ) ) {                    
-                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i . '_correct' , true);               
-                } else {
-                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i . '_correct' , false);  
-                }
+                if ( isset( $_POST[ 'wp_adaptive_assessment_option_correct' ] ) ) {                    
+                    update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_correct', sanitize_html_class( $_POST[ 'wp_adaptive_assessment_option_correct' ] ) );              
+                } 
 
             }
             
