@@ -171,7 +171,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 ?>
                 
                 <label for="wp_adaptive_object_id_module" style="display:none;">Object ID</label><br/>
-                <input type="text" name="wp_adaptive_object_id_module" id="wp_adaptive_object_id_module" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true) : ""; ?> ">                   
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id_module" id="wp_adaptive_object_id_module" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true) : ""; ?> ">                   
                 
                 <?php
 
@@ -198,7 +198,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 ?>
                 
                 <label for="wp_adaptive_object_id" style="display:none;">Object ID</label><br/>
-                <input type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">                   
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">                   
                 
                 <?php
 
@@ -225,7 +225,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 ?>
                 
                 <label for="wp_adaptive_source" style="display:none;">Source</label><br/>
-                <input type="text" name="wp_adaptive_source" id="wp_adaptive_source" placeholder="Source" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true) : ""; ?> ">                   
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_source" id="wp_adaptive_source" placeholder="Source" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true) : ""; ?> ">                   
                 
                 <?php
 
@@ -252,7 +252,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 ?>
                 
                 <label for="wp_adaptive_link" style="display:none;">Link</label><br/>
-                <input type="text" name="wp_adaptive_link" id="wp_adaptive_link" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true) : ""; ?> ">                   
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_link" id="wp_adaptive_link" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true) : ""; ?> ">                   
                 
                 <?php
 
@@ -279,7 +279,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 ?>
 
                 <label for="wp_adaptive_video_url" style="display:none;">Video URL</label><br/>
-                <input type="text" name="wp_adaptive_video_url" id="wp_adaptive_video_url" placeholder="Video URL" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true) : ""; ?> ">                      
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_video_url" id="wp_adaptive_video_url" placeholder="Video URL" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true) : ""; ?> ">                      
                 
                 <?php
 
@@ -540,18 +540,25 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
                 <div id="module_expert_model_items_meta_box">
                 
+                <ul>
+
                 <?php
 
-                $terms = get_terms( array( 
+                
+                $cats = wp_list_categories( array (
+                    'title_li' => '',
+                    'style' => 'list',                    
                     'taxonomy' => 'expert-model-item',
-                    'parent'   => 0
-                ) );         
+                    'hide_empty' => 0,
+                    'show_count' => 1,  
+                    'hierarchical' => 1,                   
+                ) );
                 
 
-                echo var_dump($terms);
                 
-
                 ?>
+
+                </ul>
                 
                 </div>                    
                 
@@ -587,7 +594,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     <!-- DON'T SPACE TEXTAREA. WILL CREATE EXTRA SPACES AND LINE BREAKS  -->
                     <textarea rows='4' cols='50' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'><?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true) : ""; ?></textarea><br><br>     
                     <label for='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'>Correct </label>
-                    <input type='radio' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_correct' value='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' <?php if ( ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_correct', $single = true) ) == 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct' ) {
+                    <input class="wp-adaptive-text-input" type='radio' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_correct' value='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' <?php if ( ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_correct', $single = true) ) == 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct' ) {
                         echo "checked";
                     } else {
                         echo "";

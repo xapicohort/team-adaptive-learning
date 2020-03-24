@@ -1,0 +1,13 @@
+.wp-adaptive-text-input{
+    width: 100%;
+}
+
+/* UNORDERED LIST OF EXPERT MODEL ITEMS ON MODULE PAGE */
+
+#module_expert_model_items_meta_box ul {
+    padding-left: 15px;
+}
+
+#module_expert_model_items_meta_box ul {
+    list-style: disc;
+}
