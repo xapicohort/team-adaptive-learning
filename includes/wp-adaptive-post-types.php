@@ -204,6 +204,33 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             }
 
+
+            // Source for node
+
+            add_meta_box( 
+                'wp_adaptive_source', 
+                'Source', 
+                'source_meta_box', 
+                'node', 
+                'normal'
+            ); 
+
+            
+            // Source callback for node
+
+            function source_meta_box() {                
+                
+                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                ?>
+                
+                <label for="wp_adaptive_source" style="display:none;">Source</label><br/>
+                <input type="text" name="wp_adaptive_source" id="wp_adaptive_source" placeholder="Source" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true) : ""; ?> ">                   
+                
+                <?php
+
+            }
+
             
             // Link
 
@@ -405,6 +432,57 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             }
 
+
+            // License dropdown for node
+
+            add_meta_box( 
+                'wp_adaptive_license', 
+                'License', 
+                'License_meta_box', 
+                'node', 
+                'side', 
+                'low'
+            ); 
+
+            // License callback for node
+
+            function license_meta_box( ) {
+                
+                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['1','Attribution (CC BY)'],  
+                    ['2','Attribution ShareAlike (CC BY-SA)'],  
+                    ['3','Attribution-NoDerivs (CC BY-ND)'],
+                    ['4','Attribution-NonCommercial (CC BY-NC)'], 
+                    ['5','Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'], 
+                    ['6','Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)'], 
+                    ['7','Copyright'],                      
+
+                ];
+
+                ?>
+
+                <label for="wp_adaptive_license" style="display:none;">License</label><br/>
+                
+                <select name="wp_adaptive_license" id="wp_adaptive_license"> 
+                
+                    <?php   
+                    
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_license', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?> 
+                
+                </select>
+                
+                <?php               
+
+            }
+
             
             // Module dropdown for node
             
@@ -442,7 +520,47 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             }
 
-            // Assessment optios for assessment
+
+            // Module expert model items
+
+            add_meta_box( 
+                'expert-model-items', 
+                'Expert Model Items', 
+                'module_expert_model_items_meta_box', 
+                'module', 
+                'normal', 
+                'low'
+            ); 
+
+            function module_expert_model_items_meta_box() {
+                
+                
+
+                ?>
+
+                <div id="module_expert_model_items_meta_box">
+                
+                <?php
+
+                $terms = get_terms( array( 
+                    'taxonomy' => 'expert-model-item',
+                    'parent'   => 0
+                ) );         
+                
+
+                echo var_dump($terms);
+                
+
+                ?>
+                
+                </div>                    
+                
+                <?php
+
+            }
+
+
+            // Assessment options for assessment
 
             function assessment_options_meta_boxes(){
 
@@ -528,6 +646,15 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id_module', sanitize_text_field( $_POST[ 'wp_adaptive_object_id_module' ] ) );
             }
+
+            if ( isset( $_POST[ 'wp_adaptive_source' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_source', sanitize_text_field( $_POST[ 'wp_adaptive_source' ] ) );
+            }
+
+            if ( isset( $_POST[ 'wp_adaptive_license' ] ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_license', sanitize_text_field( $_POST[ 'wp_adaptive_license' ] ) );
+            }         
+           
 
             
             // Options for assessments
