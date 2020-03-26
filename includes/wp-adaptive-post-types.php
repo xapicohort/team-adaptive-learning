@@ -18,9 +18,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
             add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
             add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
-            add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );
-            
+            add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );            
             add_action( 'save_post', array ( $this, 'save_metabox' ) );   
+            add_filter('single_template', array ( $this, 'post_templates') );
         }
 
      
@@ -166,7 +166,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function object_id_meta_box_module() {                
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_object_id_module', 'nonce_object_id_module' );
 
                 ?>
                 
@@ -193,7 +193,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function object_id_meta_box() {                
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_object_id', 'nonce_object_id' );
 
                 ?>
                 
@@ -220,7 +220,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function source_meta_box() {                
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_source', 'nonce_source' );
 
                 ?>
                 
@@ -247,7 +247,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function link_meta_box() {                
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_link', 'nonce_link' );
 
                 ?>
                 
@@ -274,7 +274,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function video_url_meta_box() {
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_video_url', 'nonce_video_url' );
 
                 ?>
 
@@ -301,7 +301,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function content_type_meta_box( $post ) {
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_content_type', 'nonce_content_type' );
                 
                 $options = [ 
 
@@ -352,7 +352,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function difficulty_meta_box_assessment( ) {
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_difficulty_assessment', 'nonce_difficulty_assessment' );
 
                 $options = [ 
 
@@ -400,7 +400,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function difficulty_meta_box( ) {
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_difficulty', 'nonce_difficulty' );
 
                 $options = [ 
 
@@ -448,7 +448,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             function license_meta_box( ) {
                 
-                wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                wp_nonce_field( 'nonce_license', 'nonce_license' );
 
                 $options = [ 
 
@@ -587,7 +587,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
                 function assessment_options_meta_box( $post, $args ){
                     
-                    wp_nonce_field( 'wp_adaptive_metabox_nonce', 'wp_adaptive_metabox_nonce' );
+                    wp_nonce_field( 'nonce_assessment_option', 'nonce_assessment_option' );
 
                     ?>
 
@@ -620,45 +620,52 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 
-            if ( !isset( $_POST[ 'wp_adaptive_metabox_nonce' ]) || !wp_verify_nonce( $_POST['wp_adaptive_metabox_nonce'], 'wp_adaptive_metabox_nonce' ) ) return;
+            function verify_nonce( $name ){
 
-            if ( isset( $_POST[ 'wp_adaptive_link' ] ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_link', sanitize_text_field( $_POST[ 'wp_adaptive_link' ] ) );
+                if( !isset( $_POST[ $name ]) || !wp_verify_nonce( $_POST[ $name ], $name ) ){
+                    return false;
+                } else {
+                    return true;
+                }
+            
+            }          
+            
+
+            if ( isset( $_POST[ 'wp_adaptive_link' ] ) && verify_nonce( 'nonce_link' ) ) {
+
+                update_post_meta( get_the_id(), 'wp_adaptive_link', sanitize_text_field( $_POST[ 'wp_adaptive_link' ] ) );
+                
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_video_url' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_video_url' ] ) && verify_nonce( 'nonce_video_url' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_video_url', sanitize_text_field( $_POST[ 'wp_adaptive_video_url' ] ) );
             }
             
-            if ( isset( $_POST[ 'wp_adaptive_content_type' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_content_type' ] ) && verify_nonce( 'nonce_content_type' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_content_type', sanitize_text_field( $_POST[ 'wp_adaptive_content_type' ] ) );
             } 
 
-            if ( isset( $_POST[ 'wp_adaptive_difficulty' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_difficulty' ] ) && verify_nonce( 'nonce_difficulty' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_difficulty', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty' ] ) );
             } 
 
-            if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) && verify_nonce( 'nonce_assessment' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_difficulty_assessment', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) );
             } 
 
-            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) && verify_nonce( 'nonce_object_id' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
-            }
-
-            if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) && verify_nonce( 'nonce_object_id_module' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id_module', sanitize_text_field( $_POST[ 'wp_adaptive_object_id_module' ] ) );
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_source' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_source' ] ) && verify_nonce( 'nonce_source' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_source', sanitize_text_field( $_POST[ 'wp_adaptive_source' ] ) );
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_license' ] ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_license' ] ) && verify_nonce( 'nonce_license' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_license', sanitize_text_field( $_POST[ 'wp_adaptive_license' ] ) );
             }         
            
@@ -742,7 +749,28 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             }
 
         }
-        
+
+
+        /*********************************                 
+               POST TEMPLATES           
+        *********************************/       
+
+        public function post_templates() {
+
+            echo 'text should show. text should show. text should show. text should show.';
+            global $post;
+
+            /* Checks for single template by post type */
+            if ( $post->post_type == 'module' ) {
+                
+                if ( file_exists( plugin_dir_path( __FILE__ ).'public/single-module.php' ) ) {
+                    $single = plugin_dir_path( __FILE__ ).'public/single-module.php';
+                }
+            }
+
+            return $single;
+
+        }        
 
         
         /************************************                 
