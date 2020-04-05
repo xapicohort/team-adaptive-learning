@@ -150,23 +150,25 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
         public function add_metaboxes(){            
 
+            /************************************                 
+               MODULE          
+            ************************************/            
             
-            // Object ID for module
+            // xAPI Object ID for module
 
             add_meta_box( 
-                'wp_adaptive_object_id_module', 
-                'Object ID', 
-                'object_id_meta_box_module', 
+                'wp_adaptive_module_metabox', 
+                'Module Options', 
+                'wp_adaptive_module_metabox', 
                 'module', 
-                'normal'
-            ); 
-
+                'normal'                
+            );
             
-            // Object Id callback for module
+            // xAPI Object Id callback for module
 
-            function object_id_meta_box_module() {                
+            function wp_adaptive_module_metabox() {                
                 
-                wp_nonce_field( 'nonce_object_id_module', 'nonce_object_id_module' );
+                wp_nonce_field( 'nonce_object_metabox_action', 'nonce_object_metabox_field' );
 
                 ?>
                 
@@ -176,350 +178,6 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 <?php
 
             }
-            
-            
-            // Object ID for node
-
-            add_meta_box( 
-                'wp_adaptive_object_id', 
-                'Object ID', 
-                'object_id_meta_box', 
-                'node', 
-                'normal'
-            ); 
-
-            
-            // Object Id callback for node
-
-            function object_id_meta_box() {                
-                
-                wp_nonce_field( 'nonce_object_id', 'nonce_object_id' );
-
-                ?>
-                
-                <label for="wp_adaptive_object_id" style="display:none;">Object ID</label><br/>
-                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">                   
-                
-                <?php
-
-            }
-
-
-            // Source for node
-
-            add_meta_box( 
-                'wp_adaptive_source', 
-                'Source', 
-                'source_meta_box', 
-                'node', 
-                'normal'
-            ); 
-
-            
-            // Source callback for node
-
-            function source_meta_box() {                
-                
-                wp_nonce_field( 'nonce_source', 'nonce_source' );
-
-                ?>
-                
-                <label for="wp_adaptive_source" style="display:none;">Source</label><br/>
-                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_source" id="wp_adaptive_source" placeholder="Source" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true) : ""; ?> ">                   
-                
-                <?php
-
-            }
-
-            
-            // Link
-
-            add_meta_box( 
-                'wp_adaptive_link', 
-                'Link', 
-                'link_meta_box', 
-                'node', 
-                'normal'
-            ); 
-
-            
-            // Link callback
-
-            function link_meta_box() {                
-                
-                wp_nonce_field( 'nonce_link', 'nonce_link' );
-
-                ?>
-                
-                <label for="wp_adaptive_link" style="display:none;">Link</label><br/>
-                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_link" id="wp_adaptive_link" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true) : ""; ?> ">                   
-                
-                <?php
-
-            }
-
-            
-            // Video URL
-
-            add_meta_box( 
-                'wp_adaptive_video_url', 
-                'Video URL', 
-                'video_url_meta_box', 
-                'node', 
-                'normal'
-            ); 
-
-            
-            // Video URL callback
-
-            function video_url_meta_box() {
-                
-                wp_nonce_field( 'nonce_video_url', 'nonce_video_url' );
-
-                ?>
-
-                <label for="wp_adaptive_video_url" style="display:none;">Video URL</label><br/>
-                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_video_url" id="wp_adaptive_video_url" placeholder="Video URL" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true) : ""; ?> ">                      
-                
-                <?php
-
-            }
-
-            
-            // Content type dropdown
-
-            add_meta_box( 
-                'wp_adapative_content_type', 
-                'Content Type', 
-                'content_type_meta_box', 
-                'node', 
-                'side', 
-                'low'
-            ); 
-
-            // Content type callback
-
-            function content_type_meta_box( $post ) {
-                
-                wp_nonce_field( 'nonce_content_type', 'nonce_content_type' );
-                
-                $options = [ 
-
-                    ['_','Choose...'],
-                    ['text','Text'],  
-                    ['text_image','Text & Image'],  
-                    ['image','Image'],  
-                    ['link','Link'],  
-                    ['video','Video'],
-                    ['audio','Audio'],  
-                    ['web_object','Web Object'],    
-
-                ];
-                
-                ?>
-
-                <label for="wp_adaptive_content_type" style="display:none;">Content Type</label><br/>
-                
-                <select name="wp_adaptive_content_type" id="wp_adaptive_content_type"> 
-                    
-                    <?php
-                                  
-                    foreach ($options as $option) { ?>
-
-                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_content_type', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
-
-                    <?php } ?>                   
-
-                </select>
-                
-                <?php
-
-            }
-            
-            
-             // Difficulty dropdown for assessment
-
-             add_meta_box( 
-                'wp_adaptive_difficulty_assessment', 
-                'Difficulty', 
-                'difficulty_meta_box_assessment', 
-                'assessment', 
-                'side', 
-                'low'
-            ); 
-
-            // Difficulty callback for assessment
-
-            function difficulty_meta_box_assessment( ) {
-                
-                wp_nonce_field( 'nonce_difficulty_assessment', 'nonce_difficulty_assessment' );
-
-                $options = [ 
-
-                    ['_','Choose...'],
-                    ['1','1 - understand/remember'],  
-                    ['2','2 - apply/analyze'],  
-                    ['3','3 - create/evaluate'],  
-                     
-
-                ];
-
-                ?>
-
-                <label for="wp_adaptive_difficulty_assessment" style="display:none;">Difficulty</label><br/>
-                
-                <select name="wp_adaptive_difficulty_assessment" id="wp_adaptive_difficulty_assessment"> 
-                
-                    <?php   
-                    
-                    foreach ($options as $option) { ?>
-
-                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_difficulty_assessment', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
-
-                    <?php } ?> 
-                
-                </select>
-                
-                <?php               
-
-            }
-            
-            
-            // Difficulty dropdown for node
-
-            add_meta_box( 
-                'wp_adaptive_difficulty', 
-                'Difficulty', 
-                'difficulty_meta_box', 
-                'node', 
-                'side', 
-                'low'
-            ); 
-
-            // Difficulty callback for node
-
-            function difficulty_meta_box( ) {
-                
-                wp_nonce_field( 'nonce_difficulty', 'nonce_difficulty' );
-
-                $options = [ 
-
-                    ['_','Choose...'],
-                    ['1','1 - understand/remember'],  
-                    ['2','2 - apply/analyze'],  
-                    ['3','3 - create/evaluate'],  
-                     
-
-                ];
-
-                ?>
-
-                <label for="wp_adaptive_difficulty" style="display:none;">Difficulty</label><br/>
-                
-                <select name="wp_adaptive_difficulty" id="wp_adaptive_difficulty"> 
-                
-                    <?php   
-                    
-                    foreach ($options as $option) { ?>
-
-                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_difficulty', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
-
-                    <?php } ?> 
-                
-                </select>
-                
-                <?php               
-
-            }
-
-
-            // License dropdown for node
-
-            add_meta_box( 
-                'wp_adaptive_license', 
-                'License', 
-                'License_meta_box', 
-                'node', 
-                'side', 
-                'low'
-            ); 
-
-            // License callback for node
-
-            function license_meta_box( ) {
-                
-                wp_nonce_field( 'nonce_license', 'nonce_license' );
-
-                $options = [ 
-
-                    ['_','Choose...'],
-                    ['1','Attribution (CC BY)'],  
-                    ['2','Attribution ShareAlike (CC BY-SA)'],  
-                    ['3','Attribution-NoDerivs (CC BY-ND)'],
-                    ['4','Attribution-NonCommercial (CC BY-NC)'], 
-                    ['5','Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'], 
-                    ['6','Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)'], 
-                    ['7','Copyright'],                      
-
-                ];
-
-                ?>
-
-                <label for="wp_adaptive_license" style="display:none;">License</label><br/>
-                
-                <select name="wp_adaptive_license" id="wp_adaptive_license"> 
-                
-                    <?php   
-                    
-                    foreach ($options as $option) { ?>
-
-                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_license', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
-
-                    <?php } ?> 
-                
-                </select>
-                
-                <?php               
-
-            }
-
-            
-            // Module dropdown for node
-            
-            add_meta_box( 
-                'content-parent', 
-                'Module', 
-                'content_attributes_meta_box', 
-                'node', 
-                'side', 
-                'low'
-            );            
-            
-            // Module callback for node
-            
-            function content_attributes_meta_box( $post ) {
-
-                $post_type_object = get_post_type_object( $post->post_type );
-
-                $pages = wp_dropdown_pages( 
-                    array( 
-                        'post_type' => 'module', 
-                        'selected' => $post->post_parent, 
-                        'name' => 'parent_id', 
-                        'show_option_none' => __( 
-                            '(no parent)' ), 
-                            'sort_column'=> 'menu_order, 
-                            post_title', 
-                            'echo' => 0 
-                        ) 
-                    );
-
-                if ( ! empty( $pages ) ) {
-                    echo $pages;
-                }
-
-            }
-
 
             // Module expert model items
 
@@ -532,8 +190,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 'low'
             ); 
 
-            function module_expert_model_items_meta_box() {
-                
+            function module_expert_model_items_meta_box() {                
                 
 
                 ?>
@@ -565,51 +222,253 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                 <?php
 
             }
+            
+            
+            /************************************                 
+               NODE           
+            ************************************/            
+            
+            // ADD NODE METABOX
 
+            add_meta_box( 
+                'wp_adaptive_node_metabox', 
+                'Node Options', 
+                'wp_adaptive_node_metabox', 
+                'node', 
+                'normal'
+            ); 
 
-            // Assessment options for assessment
+            
+            // NODE METABOX CALLBACK
 
+            function wp_adaptive_node_metabox() {                
+                
+                wp_nonce_field( 'nonce_node_metabox_action', 'nonce_node_metabox_field' );
+
+                ?>
+                
+                <!-- OBJECT ID -->
+                
+                <label for="wp_adaptive_object_id">Object ID</label><br/>
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">               
+                </br></br>
+
+                <!-- SOURCE -->
+
+                <label for="wp_adaptive_source">Source</label><br/>
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_source" id="wp_adaptive_source" placeholder="Source" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_source', $single = true) : ""; ?> "> 
+                </br></br>
+                
+                <!-- LINK -->
+
+                <label for="wp_adaptive_link">Link</label><br/>
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_link" id="wp_adaptive_link" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_link', $single = true) : ""; ?> "> 
+                </br></br>
+
+                <!-- VIDEO URL -->
+                
+                <label for="wp_adaptive_video_url">Video URL</label><br/>
+                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_video_url" id="wp_adaptive_video_url" placeholder="Video URL" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_video_url', $single = true) : ""; ?> "> 
+                </br></br>
+                
+                <!-- CONTENT TYPE -->
+                
+                <?php
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['text','Text'],  
+                    ['text_image','Text & Image'],  
+                    ['image','Image'],  
+                    ['link','Link'],  
+                    ['video','Video'],
+                    ['audio','Audio'],  
+                    ['web_object','Web Object'],    
+
+                ];
+                
+                ?>
+
+                <label for="wp_adaptive_content_type">Content Type</label><br/>
+                
+                <select name="wp_adaptive_content_type" id="wp_adaptive_content_type"> 
+                    
+                    <?php
+                                  
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_content_type', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?>                   
+
+                </select></br></br>
+
+                
+                <!-- DIFFICULTY -->
+                
+                <?php
+
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['1','1 - understand/remember'],  
+                    ['2','2 - apply/analyze'],  
+                    ['3','3 - create/evaluate'],  
+                     
+
+                ];
+
+                ?>
+
+                <label for="wp_adaptive_difficulty">Difficulty</label><br/>
+                
+                <select name="wp_adaptive_difficulty" id="wp_adaptive_difficulty"> 
+                
+                    <?php   
+                    
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_difficulty', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?> 
+                
+                </select></br></br>
+
+                
+                <!-- LICENSE -->
+                
+                <?php
+
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['1','Attribution (CC BY)'],  
+                    ['2','Attribution ShareAlike (CC BY-SA)'],  
+                    ['3','Attribution-NoDerivs (CC BY-ND)'],
+                    ['4','Attribution-NonCommercial (CC BY-NC)'], 
+                    ['5','Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)'], 
+                    ['6','Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)'], 
+                    ['7','Copyright'],                      
+
+                ];
+
+                ?>
+
+                <label for="wp_adaptive_license">License</label><br/>
+                
+                <select name="wp_adaptive_license" id="wp_adaptive_license"> 
+                
+                    <?php   
+                    
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_license', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?> 
+                
+                </select></br></br>                 
+                
+                <?php
+
+            }
+            
+            
+            /************************************                 
+               ASSESSMENT          
+            ************************************/ 
+            
+            // ADD ASSESSMENT METABOX
+
+             add_meta_box( 
+                'wp_adaptive_assessment_metabox', 
+                'Assessment Options', 
+                'difficulty_meta_box_assessment', 
+                'assessment', 
+                'normal', 
+                'high'
+            ); 
+
+            // ASSESSMENT METABOX CALLBACK
+
+            function difficulty_meta_box_assessment() {
+                
+                wp_nonce_field( 'nonce_assessment_metabox_action', 'nonce_assessment_metabox_field' );
+
+                
+                // DIFFICULTY
+                
+                $options = [ 
+
+                    ['_','Choose...'],
+                    ['1','1 - understand/remember'],  
+                    ['2','2 - apply/analyze'],  
+                    ['3','3 - create/evaluate'],  
+                     
+
+                ];
+
+                ?>
+
+                <label for="wp_adaptive_difficulty_assessment">Difficulty</label><br/>
+                
+                <select name="wp_adaptive_difficulty_assessment" id="wp_adaptive_difficulty_assessment"> 
+                
+                    <?php   
+                    
+                    foreach ($options as $option) { ?>
+
+                        <option value="<?php echo strtolower($option[0]); ?>" <?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_difficulty_assessment', $single = true) == strtolower($option[0])) ? 'selected="selected"' : ""; ?>><?php echo $option[1]; ?></option>
+
+                    <?php } ?> 
+                
+                </select>
+
+            <?php        
+
+            }
+
+            
+            // ASSESSMENT OPTIONS
+            
             function assessment_options_meta_boxes(){
 
-                for( $i = 1; $i <= 5; $i++ ){
+                add_meta_box( 
+                    'wp_adaptive_assessment_options',
+                    'Options', 
+                    'wp_adaptive_assessment_options', 
+                    'assessment', 
+                    'normal', 
+                    'high'              
+                );                
 
-                    add_meta_box( 
-                        'wp_adaptive_assessment_option_' . $i, 
-                        'Option ' . $i, 
-                        'assessment_options_meta_box', 
-                        'assessment', 
-                        'normal', 
-                        'low',
-                        array( $i )
-                    );  
-
-                }
-
-                function assessment_options_meta_box( $post, $args ){
+                function wp_adaptive_assessment_options(  ){
                     
-                    wp_nonce_field( 'nonce_assessment_option', 'nonce_assessment_option' );
+                    wp_nonce_field( 'nonce_assessment_options_metabox_action', 'nonce_assessment_options_metabox_field' );
 
-                    ?>
+                    for( $i = 1; $i <= 5; $i++ ){
+                    
+                        ?>
 
-                    <!-- DON'T SPACE TEXTAREA. WILL CREATE EXTRA SPACES AND LINE BREAKS  -->
-                    <textarea rows='4' cols='50' name='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'><?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $args['args'][0], $single = true) : ""; ?></textarea><br><br>     
-                    <label for='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>'>Correct </label>
-                    <input class="wp-adaptive-text-input" type='radio' id='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' name='wp_adaptive_assessment_option_correct' value='wp_adaptive_assessment_option_<?php echo $args['args'][0] ?>_correct' <?php if ( ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_correct', $single = true) ) == 'wp_adaptive_assessment_option_' . $args['args'][0] . '_correct' ) {
-                        echo "checked";
-                    } else {
-                        echo "";
-                    } ?> >
+                        <!-- DON'T SPACE TEXTAREA. WILL CREATE EXTRA SPACES AND LINE BREAKS  -->
+                        <textarea rows='4' cols='50' name='wp_adaptive_assessment_option_<?php echo $i ?>' id='wp_adaptive_assessment_option_<?php echo $i ?>'><?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $i, $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_assessment_option_' . $i, $single = true) : ""; ?></textarea> </br>
+                        <label for='wp_adaptive_assessment_option_<?php echo $i ?>'>Correct </label>
+                        <input class="wp-adaptive-text-input" type='radio' id='wp_adaptive_assessment_option_<?php echo $i ?>_correct' name='wp_adaptive_assessment_option_correct' value='wp_adaptive_assessment_option_<?php echo $i ?>_correct' <?php if ( ( get_post_meta( get_the_ID(), $key = 'wp_adaptive_assessment_option_correct', $single = true) ) == 'wp_adaptive_assessment_option_' . $i . '_correct' ) {
+                            echo "checked";
+                        } else {
+                            echo "";
+                        } ?> > </br></br> 
 
-                    <?php
+                        <?php
+
+                    }
 
                 }
 
             }
 
-            assessment_options_meta_boxes();
+            assessment_options_meta_boxes();                                      
 
         }
-
         
         
         /************************************                 
@@ -620,73 +479,61 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 
-            function verify_nonce( $name ){
-
-                if( !isset( $_POST[ $name ]) || !wp_verify_nonce( $_POST[ $name ], $name ) ){
-                    return false;
-                } else {
-                    return true;
-                }
+            // MODULE
             
-            }          
-            
-
-            if ( isset( $_POST[ 'wp_adaptive_link' ] ) && verify_nonce( 'nonce_link' ) ) {
-
-                update_post_meta( get_the_id(), 'wp_adaptive_link', sanitize_text_field( $_POST[ 'wp_adaptive_link' ] ) );
-                
-            }
-
-            if ( isset( $_POST[ 'wp_adaptive_video_url' ] ) && verify_nonce( 'nonce_video_url' ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_video_url', sanitize_text_field( $_POST[ 'wp_adaptive_video_url' ] ) );
-            }
-            
-            if ( isset( $_POST[ 'wp_adaptive_content_type' ] ) && verify_nonce( 'nonce_content_type' ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_content_type', sanitize_text_field( $_POST[ 'wp_adaptive_content_type' ] ) );
-            } 
-
-            if ( isset( $_POST[ 'wp_adaptive_difficulty' ] ) && verify_nonce( 'nonce_difficulty' ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_difficulty', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty' ] ) );
-            } 
-
-            if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) && verify_nonce( 'nonce_assessment' ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_difficulty_assessment', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) );
-            } 
-
-            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) && verify_nonce( 'nonce_object_id' ) ) {
-				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
-            }
-
-            if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) && verify_nonce( 'nonce_object_id_module' ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_object_id_module' ] ) && isset( $_POST['nonce_object_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_object_metabox_field'], 'nonce_object_metabox_action' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id_module', sanitize_text_field( $_POST[ 'wp_adaptive_object_id_module' ] ) );
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_source' ] ) && verify_nonce( 'nonce_source' ) ) {
+            // NODE
+
+            if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
+            }
+
+            if ( isset( $_POST[ 'wp_adaptive_link' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+                update_post_meta( get_the_id(), 'wp_adaptive_link', sanitize_text_field( $_POST[ 'wp_adaptive_link' ] ) );                
+            }
+
+            if ( isset( $_POST[ 'wp_adaptive_video_url' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_video_url', sanitize_text_field( $_POST[ 'wp_adaptive_video_url' ] ) );
+            }
+
+            if ( isset( $_POST[ 'wp_adaptive_content_type' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_content_type', sanitize_text_field( $_POST[ 'wp_adaptive_content_type' ] ) );
+            } 
+
+            if ( isset( $_POST[ 'wp_adaptive_difficulty' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_difficulty', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty' ] ) );
+            } 
+
+            if ( isset( $_POST[ 'wp_adaptive_source' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_source', sanitize_text_field( $_POST[ 'wp_adaptive_source' ] ) );
             }
 
-            if ( isset( $_POST[ 'wp_adaptive_license' ] ) && verify_nonce( 'nonce_license' ) ) {
+            if ( isset( $_POST[ 'wp_adaptive_license' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_license', sanitize_text_field( $_POST[ 'wp_adaptive_license' ] ) );
-            }         
-           
+            } 
 
+            // ASSESSMENT  
+
+            if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) && isset( $_POST['nonce_assessment_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_assessment_metabox_field'], 'nonce_assessment_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'wp_adaptive_difficulty_assessment', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) );
+            }  
             
-            // Options for assessments
+            // ASSESSMENT OPTIONS
 
             for( $i = 1; $i <= 5; $i++ ){
 
-                if ( isset( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) ) {
+                if ( isset( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) && isset( $_POST['nonce_assessment_options_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_assessment_options_metabox_field'], 'nonce_assessment_options_metabox_action' ) ) {
                     update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_' . $i, trim( sanitize_text_field( $_POST[ 'wp_adaptive_assessment_option_' . $i ] ) ) );                
                 } 
 
-                if ( isset( $_POST[ 'wp_adaptive_assessment_option_correct' ] ) ) {                    
+                if ( isset( $_POST[ 'wp_adaptive_assessment_option_correct' ] ) && isset( $_POST['nonce_assessment_options_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_assessment_options_metabox_field'], 'nonce_assessment_options_metabox_action' ) ) {                    
                     update_post_meta( get_the_id(), 'wp_adaptive_assessment_option_correct', sanitize_html_class( $_POST[ 'wp_adaptive_assessment_option_correct' ] ) );              
                 } 
 
-            }
-            
-            
-            
+            } 
 
         }
 
