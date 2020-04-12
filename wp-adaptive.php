@@ -21,16 +21,23 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
     class WP_Adaptive {       
 
+        const PREFIX = 'wp_adaptive';
+        
         function __construct() {   
 
             if ( is_admin() ) {
-
+                
                 require_once( plugin_dir_path( __FILE__ ).'admin/wp-adaptive-admin.php' );
-                require_once( plugin_dir_path( __FILE__ ).'includes/wp-adaptive-post-types.php' );  
+                require_once( plugin_dir_path( __FILE__ ).'includes/wp-adaptive-post-types.php' );
+                     
                 wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin/css/admin-styles.css', array(), null, 'screen' );
 
-            }		            
-        } 
+            }
+            
+            require_once( plugin_dir_path( __FILE__ ).'includes/single-module.php' );
+
+        }     
+        
     }
 
 }

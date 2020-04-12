@@ -20,7 +20,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
             add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );            
             add_action( 'save_post', array ( $this, 'save_metabox' ) );   
-            add_filter('single_template', array ( $this, 'post_templates') );
+            // add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
         }
 
      
@@ -157,9 +157,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             // xAPI Object ID for module
 
             add_meta_box( 
-                'wp_adaptive_module_metabox', 
+                WP_Adaptive::PREFIX . '_module_metabox', 
                 'Module Options', 
-                'wp_adaptive_module_metabox', 
+                WP_Adaptive::PREFIX . '_module_metabox', 
                 'module', 
                 'normal'                
             );
@@ -172,7 +172,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
                 ?>
                 
-                <label for="wp_adaptive_object_id_module" style="display:none;">Object ID</label><br/>
+                <label for="wp_adaptive_object_id_module">Object ID</label><br/>
                 <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id_module" id="wp_adaptive_object_id_module" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id_module', $single = true) : ""; ?> ">                   
                 
                 <?php
@@ -231,9 +231,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             // ADD NODE METABOX
 
             add_meta_box( 
-                'wp_adaptive_node_metabox', 
+                WP_Adaptive::PREFIX . '_node_metabox', 
                 'Node Options', 
-                'wp_adaptive_node_metabox', 
+                WP_Adaptive::PREFIX . '_node_metabox', 
                 'node', 
                 'normal'
             ); 
@@ -244,6 +244,37 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             function wp_adaptive_node_metabox() {                
                 
                 wp_nonce_field( 'nonce_node_metabox_action', 'nonce_node_metabox_field' );
+
+                ?>
+
+                <!-- PARENT MODULE -->
+
+                <?php
+
+                $post_type_object = get_post_type_object( $post->post_type );
+
+                $pages = wp_dropdown_pages( 
+                    array( 
+                        'post_type' => 'module', 
+                        'selected' => get_post_meta(get_the_ID(), $key = 'node_parent_id', $single = true), 
+                        'name' => 'node_parent_id', 
+                        'show_option_none' => __( 
+                            '(no parent)' ), 
+                            'sort_column'=> 'menu_order, 
+                            post_title', 
+                            'echo' => 0 
+                        ) 
+                    );
+
+                ?>
+                
+                <label for="node_parent_id">Module</label><br/>
+
+                <?php
+                
+                if ( ! empty( $pages ) ) {
+                    echo $pages . '</br></br>';
+                }
 
                 ?>
                 
@@ -313,8 +344,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     ['_','Choose...'],
                     ['1','1 - understand/remember'],  
                     ['2','2 - apply/analyze'],  
-                    ['3','3 - create/evaluate'],  
-                     
+                    ['3','3 - create/evaluate'], 
 
                 ];
 
@@ -366,8 +396,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
                     <?php } ?> 
                 
-                </select></br></br>                 
-                
+                </select></br></br> 
+
+
                 <?php
 
             }
@@ -380,9 +411,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             // ADD ASSESSMENT METABOX
 
              add_meta_box( 
-                'wp_adaptive_assessment_metabox', 
+                WP_Adaptive::PREFIX . '_assessment_metabox', 
                 'Assessment Options', 
-                'difficulty_meta_box_assessment', 
+                WP_Adaptive::PREFIX . '_difficulty_metabox_assessment', 
                 'assessment', 
                 'normal', 
                 'high'
@@ -390,9 +421,37 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             // ASSESSMENT METABOX CALLBACK
 
-            function difficulty_meta_box_assessment() {
+            function wp_adaptive_difficulty_metabox_assessment() {
                 
                 wp_nonce_field( 'nonce_assessment_metabox_action', 'nonce_assessment_metabox_field' );
+
+                
+                // PARENT MODULE /               
+
+                $post_type_object = get_post_type_object( $post->post_type );
+
+                $pages = wp_dropdown_pages( 
+                    array( 
+                        'post_type' => 'module', 
+                        'selected' => get_post_meta(get_the_ID(), $key = 'assessment_parent_id', $single = true), 
+                        'name' => 'assessment_parent_id', 
+                        'show_option_none' => __( 
+                            '(no parent)' ), 
+                            'sort_column'=> 'menu_order, 
+                            post_title', 
+                            'echo' => 0 
+                        ) 
+                    );
+
+                ?>
+                
+                <label for="assessment_parent_id">Module</label><br/>
+
+                <?php
+                
+                if ( ! empty( $pages ) ) {
+                    echo $pages . '</br></br>';
+                }
 
                 
                 // DIFFICULTY
@@ -402,8 +461,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     ['_','Choose...'],
                     ['1','1 - understand/remember'],  
                     ['2','2 - apply/analyze'],  
-                    ['3','3 - create/evaluate'],  
-                     
+                    ['3','3 - create/evaluate'], 
 
                 ];
 
@@ -433,9 +491,9 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
             function assessment_options_meta_boxes(){
 
                 add_meta_box( 
-                    'wp_adaptive_assessment_options',
+                    WP_Adaptive::PREFIX . '_assessment_options',
                     'Options', 
-                    'wp_adaptive_assessment_options', 
+                    WP_Adaptive::PREFIX . '_assessment_options', 
                     'assessment', 
                     'normal', 
                     'high'              
@@ -487,6 +545,10 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             // NODE
 
+            if ( isset( $_POST[ 'node_parent_id' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'node_parent_id', sanitize_text_field( $_POST[ 'node_parent_id' ] ) );
+            }
+            
             if ( isset( $_POST[ 'wp_adaptive_object_id' ] ) && isset( $_POST['nonce_node_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_node_metabox_field'], 'nonce_node_metabox_action' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_object_id', sanitize_text_field( $_POST[ 'wp_adaptive_object_id' ] ) );
             }
@@ -519,7 +581,11 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             if ( isset( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) && isset( $_POST['nonce_assessment_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_assessment_metabox_field'], 'nonce_assessment_metabox_action' ) ) {
 				update_post_meta( get_the_id(), 'wp_adaptive_difficulty_assessment', sanitize_text_field( $_POST[ 'wp_adaptive_difficulty_assessment' ] ) );
-            }  
+            }
+            
+            if ( isset( $_POST[ 'assessment_parent_id' ] ) && isset( $_POST['nonce_assessment_metabox_field'] ) && wp_verify_nonce( $_POST['nonce_assessment_metabox_field'], 'nonce_assessment_metabox_action' ) ) {
+				update_post_meta( get_the_id(), 'assessment_parent_id', sanitize_text_field( $_POST[ 'assessment_parent_id' ] ) );
+            }
             
             // ASSESSMENT OPTIONS
 
@@ -604,15 +670,15 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
         public function post_templates() {
 
-            echo 'text should show. text should show. text should show. text should show.';
             global $post;
 
             /* Checks for single template by post type */
             if ( $post->post_type == 'module' ) {
-                
-                if ( file_exists( plugin_dir_path( __FILE__ ).'public/single-module.php' ) ) {
-                    $single = plugin_dir_path( __FILE__ ).'public/single-module.php';
+
+                if ( file_exists( plugin_dir_url(__FILE__) . 'includes/single-module.php' ) ) {
+                    $single = plugin_dir_url(__FILE__) . 'includes/single-module.php';
                 }
+                
             }
 
             return $single;
