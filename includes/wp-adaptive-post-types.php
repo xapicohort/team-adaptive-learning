@@ -9,19 +9,25 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
     class WP_Adaptive_Post_Types{
 
-        // Initialize
-        public function __construct()
-        {
-            add_action( 'init', array( $this, 'create_post_types' ) );  
-            add_action( 'init', array( $this, 'add_custom_taxonomies' ) );    
-            add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
-            add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
-            add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
-            add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
-            add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );            
-            add_action( 'save_post', array ( $this, 'save_metabox' ) );   
-            // add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
-        }
+            // Initialize
+            public function __construct(){
+
+                if ( is_admin() ) {
+
+                    add_action( 'init', array( $this, 'create_post_types' ) );               
+                    add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
+                    add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
+                    add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
+                    add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
+                    add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );            
+                    add_action( 'save_post', array ( $this, 'save_metabox' ) );   
+                    // add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
+
+                }
+            
+            }
+
+        
 
      
         /************************************                 
@@ -683,74 +689,8 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
             return $single;
 
-        }        
-
-        
-        /************************************                 
-               CREATE TAXONOMIES            
-        ************************************/
-
-        public function add_custom_taxonomies() { 
-                   
-            
-            // TOPICS FOR MODULES
-            
-            $labels = array(
-                'name' => _x( 'Topics', 'taxonomy general name' ),
-                'singular_name' => _x( 'Topic', 'taxonomy singular name' ),
-                'search_items' =>  __( 'Search Topics' ),
-                'all_items' => __( 'All Topics' ),
-                'parent_item' => __( 'Parent Topic' ),
-                'parent_item_colon' => __( 'Parent Topic:' ),
-                'edit_item' => __( 'Edit Topic' ), 
-                'update_item' => __( 'Update Topic' ),
-                'add_new_item' => __( 'Add New Topic' ),
-                'new_item_name' => __( 'New Topic Name' ),
-                'menu_name' => __( 'Topics' ),
-            );
-           
-             
-            register_taxonomy('topics', array('module'), array(
-                'hierarchical' => true,
-                'labels' => $labels,
-                'show_ui' => true,
-                'show_admin_column' => true,
-                'query_var' => true,
-                'rewrite' => array( 'slug' => 'topic' ),                
-                'show_in_nav_menus' => true,
-                'show_in_menu' => true,
-            ));
-            
-            
-            // EXPERT MODEL ITEM FOR NODES
-            
-             $labels = array(
-                'name' => _x( 'Expert Model Items', 'taxonomy general name' ),
-                'singular_name' => _x( 'Item', 'taxonomy singular name' ),
-                'search_items' =>  __( 'Search Items' ),
-                'all_items' => __( 'All Items' ),
-                'parent_item' => __( 'Parent Item' ),
-                'parent_item_colon' => __( 'Parent Item:' ),
-                'edit_item' => __( 'Edit Item' ), 
-                'update_item' => __( 'Update Item' ),
-                'add_new_item' => __( 'Add New Item' ),
-                'new_item_name' => __( 'New Item Name' ),
-                'menu_name' => __( 'Expert Model Items' ),
-            );
-           
-             
-            register_taxonomy( 'expert-model-item', array( 'node', 'assessment' ), array(
-                'hierarchical' => true,
-                'labels' => $labels,
-                'show_ui' => true,
-                'show_admin_column' => true,
-                'query_var' => true,
-                'rewrite' => array( 'slug' => 'node' ),
-                'show_in_menu' => true,
-                'show_in_nav_menus' => true,               
-            ));
-
         }    
+           
     }
 
 }
