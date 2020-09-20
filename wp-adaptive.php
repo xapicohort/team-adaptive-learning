@@ -35,7 +35,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
             
-            require_once( plugin_dir_path( __FILE__ ).'includes/single-module.php' );
+            //CAUSING WORDPRESS EDITOR ISSUES require_once( plugin_dir_path( __FILE__ ).'includes/single-module.php' );
 
         }     
         
