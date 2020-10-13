@@ -45,7 +45,8 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
             
-            require_once( plugin_dir_path( __FILE__ ).'includes/single-module.php' );            
+            wp_enqueue_style( 'public-styles', plugin_dir_url( __FILE__ ) . '/assets/public-styles.css', array(), null, 'screen' );
+            require_once( plugin_dir_path( __FILE__ ).'includes/single-node.php' );            
             add_action( 'init', array( $this, 'create_post_types' ) );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );  
 
@@ -698,9 +699,15 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         public function post_templates( $template ) {
             global $post;
         
-            if ( 'module' === $post->post_type && locate_template( array( '/includes/single-module.php' ) ) !== $template ) {
+            if ( 'node' === $post->post_type && locate_template( array( '/includes/single-node.php' ) ) !== $template ) {
 
-                return plugin_dir_path( __FILE__ ) . '/includes/single-module.php';
+                return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';
+                
+            }
+
+            if ( 'assessment' === $post->post_type && locate_template( array( '/includes/single-assessment.php' ) ) !== $template ) {
+
+                return plugin_dir_path( __FILE__ ) . '/includes/single-assessment.php';
                 
             }
         
