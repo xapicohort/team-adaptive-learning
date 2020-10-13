@@ -1,13 +1,21 @@
-<?php
+<?php 
+
+// if ( have_posts() ) : 
+//     while ( have_posts() ) : the_post(); 
+//         // Display post content
+//     endwhile; 
+// endif; 
+
+
+echo '<h1>' . $post->post_title . '</h1>';
+echo '<p>' . $post->post_content . '</p>';	
 
 
 ?>
 
-<div id="primary" class="site-content">
-    <div id="content" role="main">
-        
-    </div><!-- #content -->
-</div><!-- #primary -->
 
-<?php
+
+
+
+
 

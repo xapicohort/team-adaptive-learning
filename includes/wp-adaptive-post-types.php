@@ -14,19 +14,24 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
 
                 if ( is_admin() ) {
 
-                    add_action( 'init', array( $this, 'create_post_types' ) );               
+                                   
                     add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
                     add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );                          
                     add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
                     add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                          
                     add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );            
-                    add_action( 'save_post', array ( $this, 'save_metabox' ) );   
-                    // add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
-
+                    add_action( 'save_post', array ( $this, 'save_metabox' ) );
+                             
+                    
                 }
+
+                add_action( 'init', array( $this, 'create_post_types' ) );
+                add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );          
             
             }
 
+            
+           
         
 
      
@@ -36,7 +41,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
         
         public function create_post_types() {
     
-            
+            flush_rewrite_rules();
             // MODULE
 
             register_post_type( 'module',
@@ -53,7 +58,7 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     ),
                     'public' => true,
                     'has_archive' => true,
-                    'rewrite' => array('slug' => 'modules'),
+                    //'rewrite' => array('slug' => 'modules'),
                     'show_in_rest' => false,
                     'description' => 'Container for adaptive learning content created with the WP Adaptive plugin.',
                     'hierarchical' => true,                    
@@ -64,10 +69,10 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                     'can_export' => true,                    
                     'exclude_from_search' => false,
                     'publicly_queryable' => true,
-                    'capability_type' => 'post',
+                    'capability_type' => 'page',
                     'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'revisions' ),
                     'taxonomies' => array( 'topic' ),
-                    'menu_icon' => 'dashicons-randomize'                    
+                    'menu_icon' => 'dashicons-randomize'                                
         
                 )
 
@@ -674,21 +679,16 @@ if ( !class_exists( 'WP_Adaptive_Post_Types' ) ) {
                POST TEMPLATES           
         *********************************/       
 
-        public function post_templates() {
-
+        public function post_templates( $template ) {
             global $post;
+        
+            if ( 'module' === $post->post_type && locate_template( array( 'single-module.php' ) ) !== $template ) {
 
-            /* Checks for single template by post type */
-            if ( $post->post_type == 'module' ) {
-
-                if ( file_exists( plugin_dir_url(__FILE__) . 'includes/single-module.php' ) ) {
-                    $single = plugin_dir_url(__FILE__) . 'includes/single-module.php';
-                }
+                return plugin_dir_path( __FILE__ ) . 'single-module.php';
                 
             }
-
-            return $single;
-
+        
+            return $template;
         }    
            
     }
