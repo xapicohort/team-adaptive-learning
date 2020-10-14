@@ -698,8 +698,8 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
         public function post_templates( $template ) {
             global $post;
-        
-            if ( 'node' === $post->post_type && locate_template( array( '/includes/single-node.php' ) ) !== $template ) {
+            
+            if ( 'node' === $post->post_type) {
 
                 return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';
                 
