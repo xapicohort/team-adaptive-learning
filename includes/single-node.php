@@ -56,7 +56,7 @@ if( $post->post_type == 'node' ) :
 
                 <?php
                 echo '<h1>' . get_the_title() . '</h1>';
-                echo '<div>' . get_the_content() . '</div>';
+                echo '<div>' . the_content() . '</div>';
 
                 switch ($post->wp_adaptive_license) {
                     case 1:

@@ -684,7 +684,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                     break;
                 
                 case 'content' :
-                    echo get_post_field('post_content', $post_id);; 
+                    echo get_post_field('post_content', $post_id); 
                     break;               
         
             }
@@ -705,8 +705,8 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 
             }
 
-            if ( 'assessment' === $post->post_type && locate_template( array( '/includes/single-assessment.php' ) ) !== $template ) {
-
+            if ( 'assessment' === $post->post_type ) {
+                
                 return plugin_dir_path( __FILE__ ) . '/includes/single-assessment.php';
                 
             }
