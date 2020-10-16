@@ -45,7 +45,6 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
             
-            wp_enqueue_style( 'public-styles', plugin_dir_url( __FILE__ ) . '/assets/public-styles.css', array(), null, 'screen' );                            
             add_action( 'init', array( $this, 'create_post_types' ) );
             add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );  
@@ -720,9 +719,9 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         public function post_templates( $template ) {
             global $post;
             
-            if ( 'node' === $post->post_type) {
-
-                return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';                
+            if ( 'node' === $post->post_type ) {
+                
+                return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';
                 
             }
 
