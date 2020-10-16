@@ -45,12 +45,31 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
             
-            wp_enqueue_style( 'public-styles', plugin_dir_url( __FILE__ ) . '/assets/public-styles.css', array(), null, 'screen' );
-            require_once( plugin_dir_path( __FILE__ ).'includes/single-node.php' );            
+            wp_enqueue_style( 'public-styles', plugin_dir_url( __FILE__ ) . '/assets/public-styles.css', array(), null, 'screen' );                            
             add_action( 'init', array( $this, 'create_post_types' ) );
+            add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );  
+            // require_once plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php';
 
         } 
+
+        /************************************
+                MODIFY POSTS
+        ************************************/
+        public function modify_post(){
+            if( $this->is_post_type( 'node' ) OR $this->is_post_type( 'assessment' ) ) {               
+                require_once( plugin_dir_path( __FILE__ ).'includes/header-wp-adaptive.php' );
+            }
+        }
+
+        private function is_post_type($type){
+            global $wp_query;
+            if($type == get_post_type($wp_query->post->ID)) 
+                return true;
+            return false;
+        }        
+
+        
         
          /************************************                 
                CREATE POST TYPES             
@@ -58,7 +77,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         
         public function create_post_types() {
     
-            flush_rewrite_rules();
+            
             // MODULE
 
             register_post_type( 'module',
@@ -701,7 +720,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             
             if ( 'node' === $post->post_type) {
 
-                return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';
+                return plugin_dir_path( __FILE__ ) . '/includes/single-node.php';                
                 
             }
 

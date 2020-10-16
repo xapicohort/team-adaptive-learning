@@ -1,74 +1,8 @@
-<?php?>
+<?php
 
-<style>
-    .wp-adaptive{
-        width: 60%; 
-        margin: 50px auto; 
-        font-family: sans-serif; 
-        font-size: 1.7em;
-    }
-
-    .wp-adaptive p{
-        text-align: center;
-        font-size: 1.6em;        
-    }  
-
-    .button{
-        padding: 10px 30px;
-        font-weight: bold;
-        font-size: 1em;
-        margin-top: 30px;
-        text-decoration: none;
-        color: black;
-    }
-
-    .button:hover{
-        cursor: pointer;
-        background-color: #4444442b;
-    }
-    
-    .submit-button{
-        float:right;
-        border: 1px solid black;
-        border-radius: 3px;         
-    }
-
-    .form input{
-        height: 100%;
-    }
-
-    .form-element{
-        margin: 30px 0px;
-        display: flex;
-    }
-
-    .form-element input{
-        -webkit-appearance:button;
-        -moz-appearance:button;
-        appearance:button;
-        border:4px solid #ccc;
-        border-top-color:#bbb;
-        border-left-color:#bbb;
-        background:#fff;
-        width:30px;
-        height:30px;
-        border-radius:50%;
-    }
-    
-    .form-element .radio-wrapper{        
-        float: left;
-        margin-right: 20px;
-        height: 100%;
-        width: 50px;
-    }    
-
-    .form-element .label-wrapper{   
-        flex-grow: 1;
-    }  
-
-</style>
-
-<?php 
+/* 
+ * TEMPLATE NAME: SINGLE-ASSESMENT
+ */
 
 if( $post->post_type == 'assessment' ) :
     if ( have_posts() ) : 
@@ -76,7 +10,7 @@ if( $post->post_type == 'assessment' ) :
 
             ?>
 
-            <div class="wp-adaptive">
+            <div class="wp-adaptive assessment">
 
                 <?php
                 echo the_content();                

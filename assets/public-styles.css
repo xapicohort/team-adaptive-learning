@@ -1,0 +1,39 @@
+.wp-adaptive-content{
+    width: 60%; 
+    margin: 50px auto; 
+    font-family: 
+    sans-serif; 
+    font-size: 1.6em;
+}
+
+.wp-adaptive-content h1{
+    text-align: center;
+}   
+
+.wp-adaptive-license{
+    font-size: .6em;
+    font-style: italic;
+    color: grey;
+    text-align: center;
+}
+
+.wp-adaptive-button{
+    padding: 10px 30px;
+    font-weight: bold;
+    font-size: 1em;
+    margin-top: 30px;
+    text-decoration: none;
+    color: black;
+}
+
+.wp-adaptive-button:hover{
+    cursor: pointer;
+}
+
+.next-button{
+    float:right;        
+}
+
+.back-button{
+    float:left;         
+}
