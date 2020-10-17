@@ -47,12 +47,11 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
             
+            require_once( plugin_dir_path( __FILE__ ).'includes/single-node.php' );  
             add_action( 'init', array( $this, 'create_post_types' ) );
             add_action( 'the_post' , array ($this, 'modify_post') );
-            add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );  
-            require_once( plugin_dir_path(__FILE__) . 'includes/single-node.php' );
-            require_once( plugin_dir_path(__FILE__) . 'includes/single-assessment.php' );
-            //require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
+            add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
+            require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
 
         } 
 
@@ -80,6 +79,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         
         public function create_post_types() {
     
+            flush_rewrite_rules();
             
             // MODULE
 
