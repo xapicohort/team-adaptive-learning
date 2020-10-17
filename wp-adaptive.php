@@ -52,7 +52,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );  
             require_once( plugin_dir_path(__FILE__) . 'includes/single-node.php' );
             require_once( plugin_dir_path(__FILE__) . 'includes/single-assessment.php' );
-            require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
+            //require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
 
         } 
 
