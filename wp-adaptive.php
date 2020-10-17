@@ -79,7 +79,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         
         public function create_post_types() {
     
-            flush_rewrite_rules();
+            //flush_rewrite_rules();
             
             // MODULE
 
