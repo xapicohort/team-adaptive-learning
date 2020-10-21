@@ -35,7 +35,7 @@ if( $post->post_type == 'assessment' ) :
 
                 $next_post_link_url = get_permalink( get_adjacent_post(false,'',false)->ID );
                 
-                echo '<a class="submit-button button" href="' . $next_post_link_url .'"/>Submit</a>';
+                echo '<a class="submit-button wp-adaptive-button" href="' . $next_post_link_url .'"/>Submit</a>';
                                 
                 ?>
 

@@ -10,14 +10,23 @@ add_action( 'admin_init', 'page_init' );
 
 // Admin page
 function add_plugin_page()
-{
+{ 
     
     add_menu_page(
-        'Settings Admin', 
-        'WP Adaptive', 
-        'manage_options', 
-        'wp-adaptive',                 
-        'create_admin_page'
+        'Settings Admin', //title
+        'WP Adaptive', //menu title
+        'manage_options', //required user capability
+        'wp-adaptive', //url slug                
+        'create_admin_page' //callback funtion to display plugin page
+    );
+
+    add_submenu_page(
+        'wp-adaptive', 
+        'Settings', 
+        'Settings', 
+        'edit_posts', 
+        'edit-tags.php?taxonomy=topics',
+        false 
     );
 
     add_submenu_page(
@@ -111,7 +120,7 @@ function page_init()
     );  
 
     
-        /************************************                 
+    /************************************                 
         AWS SECTION              
     ************************************/
 

@@ -9,7 +9,9 @@
 <html>
 
     <head>
-
+        <?php wp_head(); ?>
+        <!-- Need to find reliable way of including this js -->
+        <script type='text/javascript' src='/wordpress/wp-content/plugins/wp-adaptive/includes/jquery-3.5.1.min.js'></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" >
 
         <link rel="profile" href="https://gmpg.org/xfn/11">
@@ -20,7 +22,7 @@
                 margin: 50px auto; 
                 font-family: 
                 sans-serif; 
-                font-size: 1.6em;
+                
             }
 
             .wp-adaptive h1{
@@ -40,7 +42,7 @@
                 text-align: center;
             }
 
-            .button{
+            .wp-adaptive-button{
                 padding: 10px 30px;
                 font-weight: bold;
                 font-size: 1em;
@@ -49,11 +51,11 @@
                 color: black;
             }
 
-            .button:hover{
+            .wp-adaptive-button:hover{
                 cursor: pointer;
             }            
 
-            .button:hover{
+            .wp-adaptive-button:hover{
                 cursor: pointer;
                 background-color: #4444442b;
             }

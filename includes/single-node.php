@@ -44,12 +44,38 @@ if( $post->post_type == 'node' ) :
                 $next_post_link_url = get_permalink( get_adjacent_post(false,'',false)->ID );
                 $prev_post_link_url = get_permalink( get_adjacent_post(false,'',true)->ID );
 
-                echo '<a class="next-button button" href="' . $next_post_link_url .'"/>Next  &rarr;</a>';
-                echo '<a class="back-button button" href="' . $prev_post_link_url .'"/>&larr;  Back</a>';               
-                
+                echo '<a class="next-button wp-adaptive-button" href="' . $next_post_link_url .'"/>Next  &rarr;</a>';
+                echo '<a class="back-button wp-adaptive-button" href="' . $prev_post_link_url .'"/>&larr;  Back</a>';
+                                
                 ?>
 
             </div>
+
+            <script>                
+		
+                // when user clicks the link
+                $(document).ready( function(event) {  
+                                   
+                    // submit the data
+                    $.post(ajax_public.ajaxurl, {
+                        <?php
+                            $post = get_the_id();
+                            $user = wp_get_current_user()->ID;
+                        ?>
+                        nonce:     ajax_public.nonce,
+                        action:    'public_hook',
+                        wp_data:    [<?php echo $post . ',' . $user ?>]                    
+                        
+                    }, function(data) {
+                        
+                        // log data
+                        console.log(data);
+                        
+                    });
+                    
+                });
+                
+            </script>
 
             <?php         
 

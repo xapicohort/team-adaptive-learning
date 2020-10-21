@@ -29,36 +29,164 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 
                 require_once( plugin_dir_path( __FILE__ ).'admin/wp-adaptive-admin.php' ); 
                 wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin/css/admin-styles.css', array(), null, 'screen' );
+                wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'includes/jquery-3.5.1.min.js', array(), null, true);
+                
                 // Post types
                 add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
                 add_action( 'manage_node_posts_custom_column' , array ( $this, 'node_posts_custom_column' ), 10, 2 );  
                 add_action( 'manage_assessment_posts_custom_column' , array ( $this, 'assessment_posts_custom_column' ), 10, 2 );                         
                 add_action( 'save_post', array ( $this, 'save_metabox' ) );
                 add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
-                add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );   
-                // Taxonomies
-                add_action( 'init', array( $this, 'add_custom_taxonomies' ) ); 
-                add_action( 'expert-model-item_add_form_fields', array( $this, 'taxonomy_display_custom_meta_field' ) );
-                add_action( 'expert-model-item_edit_form_fields', array( $this, 'taxonomy_display_custom_meta_field' ) );
-                add_action( 'create_expert-model-item', array( $this, 'save_taxonomy_custom_fields' ) );
-                add_action( 'edited_expert-model-item', array( $this, 'save_taxonomy_custom_fields' ) );  
-                // Ajax
-                add_action( 'wp_ajax_send', array( $this, 'send' ) );
+                add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );
 
             }
-            
+
+            // Taxonomies
+            add_action( 'init', array( $this, 'add_custom_taxonomies' ) ); 
+            add_action( 'expert-model-item_add_form_fields', array( $this, 'taxonomy_display_custom_meta_field' ) );
+            add_action( 'expert-model-item_edit_form_fields', array( $this, 'taxonomy_display_custom_meta_field' ) );
+            add_action( 'create_expert-model-item', array( $this, 'save_taxonomy_custom_fields' ) );
+            add_action( 'edited_expert-model-item', array( $this, 'save_taxonomy_custom_fields' ) ); 
+
+            add_action( 'wp_enqueue_scripts', array( $this, 'ajax_public_enqueue_scripts' ) );
+            // ajax hook for logged-in users: wp_ajax_{action}
+            add_action( 'wp_ajax_public_hook', array( $this, 'send_statement' ) );
+            // ajax hook for non-logged-in users: wp_ajax_nopriv_{action}
+            add_action( 'wp_ajax_nopriv_public_hook', array( $this, 'send_statement' ) );
+
+
+
             add_action( 'init', array( $this, 'create_post_types' ) );
             add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
             require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
 
-        } 
+        }
+
+        /************************************
+                AJAX
+        ************************************/
+
+        public function ajax_public_enqueue_scripts( $hook ) {
+           
+                // define script url
+                $script_url = plugins_url( '/includes/ajax-public.js', __FILE__ );
+            
+                // enqueue script
+                wp_enqueue_script( 'ajax-public', $script_url, array( 'jquery' ) );
+            
+                // create nonce
+                $nonce = wp_create_nonce( 'ajax_public' );
+            
+                // define ajax url
+                $ajax_url = admin_url( 'admin-ajax.php' );
+            
+                // define script
+                $script = array( 'nonce' => $nonce, 'ajaxurl' => $ajax_url );
+            
+                // localize script
+                wp_localize_script( 'ajax-public', 'ajax_public', $script );            
+        
+        }
+
+
+        public function send_statement(){
+            // get post, user, taxonomy data
+            $post = get_post( intval ( $_POST['wp_data'][0] ) );
+            $user = get_user_by( 'ID', $_POST['wp_data'][1] );
+            $term = get_the_terms( $post->ID, 'expert-model-item' );                   
+            
+            // check nonce  
+            check_ajax_referer( 'ajax_public', 'nonce' );          
+
+			$lrs = new TinCan\RemoteLRS(
+				'https://cloud.scorm.com/lrs/F583XZFRS8/sandbox/',
+				// xAPI version
+				'1.0.1',
+				'', //key
+				'' //secret
+            );
+            
+           $actor = new TinCan\Agent(
+				['mbox' => 'mailto:' . $user->user_email ]
+            );
+            
+            $verb = new TinCan\Verb(
+                ['id' => 'http://id.tincanapi.com/verb/viewed',
+                'display' => [
+                    'en-us' => 'viewed'
+                ]
+                ]
+            );           
+            
+			$activity = new TinCan\Activity(
+                ['id' => 'http://bradyriordan/team-adaptive-learning/'. $post->post_type . '/' . $post->ID,
+                'definition' => [
+                    'name' => [
+                        'en-US' => $post->post_title
+                    ],
+                    'description' => [
+                        'en-US' => $post->post_title
+                    ],
+                    'type' => 'https://bradyriordan.com/team-adaptive-learning/content-type/' . $post->wp_adaptive_content_type,
+                    'moreInfo' => 'https://bradyriordan.com/team-adaptive-learning/difficulty/' . $post->wp_adaptive_difficulty
+                ],
+                'objectType' => 'Activity'
+                ]
+            );
+            
+            $context = new TinCan\Context(
+                ['registration' => '91bfd506-1279-11eb-adc1-0242ac120002', // Need to generate real UUID
+                'contextActivities' => [
+                    'grouping' => [
+                        'definition' => [
+                            'name' => [
+                                'en-US' => $term[0]->name
+                            ]
+                        ],
+                        'id' => 'https://bradyriordan.com/team-adaptive-learning/expert-model-item/' . $term[0]->term_id,
+                        'objectType' => 'Activity' // Not sure if this is correct
+
+                    ]
+                ],
+                'parent' => [
+                    'definition' => [
+                        'name' => [
+                            'en-US' => $post->node_parent_id // need to get name
+                        ],
+                        'description' => [
+                            'en-US' => $post->node_parent_id // need to get name
+                        ],
+                    ],
+                    'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $post->node_parent_id, // need to get accurate URL
+                    'objectType' => 'Activity'
+                ]
+                ]
+            );
+
+			$statement = new TinCan\Statement(
+				[
+					'actor' => $actor,
+					'verb'  => $verb,
+                    'object' => $activity,
+                    'context' => $context,
+				]
+			);
+
+			$response = $lrs->saveStatement($statement);
+			if ($response->success) {
+				print "Statement sent successfully!\n";				
+			} else {
+				print "Error statement not sent: " . $response->content . "\n";
+			}            
+			wp_die();
+		}
 
         /************************************
                 MODIFY POSTS
         ************************************/
         public function modify_post(){
-            if( $this->is_post_type( 'node' ) OR $this->is_post_type( 'assessment' ) ) {               
+            if( ($this->is_post_type( 'node' ) OR $this->is_post_type( 'assessment' )) AND is_single() ) {               
                 require_once( plugin_dir_path( __FILE__ ).'includes/header-wp-adaptive.php' );
             }
         }
@@ -78,6 +206,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
         
         public function create_post_types() {
     
+            // Look into why this is required for viewing nodes
             flush_rewrite_rules();
             
             // MODULE
