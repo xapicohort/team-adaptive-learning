@@ -28,8 +28,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             if ( is_admin() ) {
                 
                 require_once( plugin_dir_path( __FILE__ ).'admin/wp-adaptive-admin.php' ); 
-                wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin/css/admin-styles.css', array(), null, 'screen' );
-                wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'includes/jquery-3.5.1.min.js', array(), null, true);
+                wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin/css/admin-styles.css', array(), null, 'screen' );                
                 
                 // Post types
                 add_action( 'add_meta_boxes', array( $this, 'add_metaboxes' ) );
@@ -54,12 +53,10 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             // ajax hook for non-logged-in users: wp_ajax_nopriv_{action}
             add_action( 'wp_ajax_nopriv_public_hook', array( $this, 'send_statement' ) );
 
-
-
             add_action( 'init', array( $this, 'create_post_types' ) );
             add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
-            require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );
+            require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );            
 
         }
 
@@ -94,7 +91,8 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             // get post, user, taxonomy data
             $post = get_post( intval ( $_POST['wp_data'][0] ) );
             $user = get_user_by( 'ID', $_POST['wp_data'][1] );
-            $term = get_the_terms( $post->ID, 'expert-model-item' );                   
+            $term = get_the_terms( $post->ID, 'expert-model-item' );
+            $parent = get_post( $post->node_parent_id );                   
             
             // check nonce  
             check_ajax_referer( 'ajax_public', 'nonce' );          
@@ -144,23 +142,23 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                                 'en-US' => $term[0]->name
                             ]
                         ],
-                        'id' => 'https://bradyriordan.com/team-adaptive-learning/expert-model-item/' . $term[0]->term_id,
+                        'id' => 'https://bradyriordan.com/team-adaptive-learning/expert-model-item/' . $term[0]->slug,
                         'objectType' => 'Activity' // Not sure if this is correct
 
-                    ]
-                ],
-                'parent' => [
-                    'definition' => [
-                        'name' => [
-                            'en-US' => $post->node_parent_id // need to get name
-                        ],
-                        'description' => [
-                            'en-US' => $post->node_parent_id // need to get name
-                        ],
                     ],
-                    'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $post->node_parent_id, // need to get accurate URL
-                    'objectType' => 'Activity'
-                ]
+                    'parent' => [
+                        'definition' => [
+                            'name' => [
+                                'en-US' => $parent->post_title // need to get name
+                            ],
+                            'description' => [
+                                'en-US' => $parent->post_title // need to get name
+                            ],
+                        ],
+                        'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $parent->ID, // need to get accurate URL
+                        'objectType' => 'Activity'
+                    ]
+                ]               
                 ]
             );
 
