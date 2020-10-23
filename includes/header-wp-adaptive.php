@@ -68,10 +68,32 @@
                 float:left;         
             }
             
-            .submit-button{
-                float:right;
+            .submit-button{                
                 border: 1px solid black;
-                border-radius: 3px;         
+                border-radius: 3px; 
+                margin: 50px 20px 0px 20px;
+                color: white;                       
+            }
+
+            .i-dont{
+                background-color:red;
+            }
+
+            .i-think{
+                background-color:orange;
+            }
+
+            .i-know{
+                background-color:green;
+            }
+
+            .submit-buttons{
+                text-align:center;
+                margin-top: 75px;
+            }
+            
+            .submit-buttons a{
+                color: white;
             }
 
             .form input{

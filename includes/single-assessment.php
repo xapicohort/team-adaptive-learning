@@ -33,9 +33,14 @@ if( $post->post_type == 'assessment' ) :
                 
                 echo '</form>';  
 
+                echo '<div class="submit-buttons">';
                 $next_post_link_url = get_permalink( get_adjacent_post(false,'',false)->ID );
                 
-                echo '<a class="submit-button wp-adaptive-button" href="' . $next_post_link_url .'"/>Submit</a>';
+                echo '<a class="submit-button wp-adaptive-button i-dont" href="' . $next_post_link_url .'"/>I don\'t know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-think" href="' . $next_post_link_url .'"/>I think I know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-know" href="' . $next_post_link_url .'"/>I know this</a>';
+
+                echo '</div>'
                                 
                 ?>
 

@@ -49,7 +49,7 @@ if ( !class_exists( 'WP_Statement' ) ) {
             $parent = get_post( $post->node_parent_id );                   
             
             // check nonce  
-            check_ajax_referer( 'ajax_public', 'nonce' );          
+            check_ajax_referer( 'ajax_public', 'nonce' );
 
 			$lrs = new TinCan\RemoteLRS(
 				'https://cloud.scorm.com/lrs/F583XZFRS8/sandbox/',
