@@ -46,7 +46,7 @@ if( $post->post_type == 'node' ) :
 
                 echo '<a class="next-button wp-adaptive-button" href="' . $next_post_link_url .'"/>Next  &rarr;</a>';
                 echo '<a class="back-button wp-adaptive-button" href="' . $prev_post_link_url .'"/>&larr;  Back</a>';
-                                
+
                 ?>
 
             </div>
@@ -63,7 +63,7 @@ if( $post->post_type == 'node' ) :
                             $user = wp_get_current_user()->ID;
                         ?>
                         nonce:     ajax_public.nonce,
-                        action:    'public_hook',
+                        action:    'node_view_statement',
                         wp_data:    [<?php echo $post . ',' . $user ?>]                    
                         
                     }, function(data) {
