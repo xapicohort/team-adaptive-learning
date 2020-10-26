@@ -21,11 +21,11 @@ if( $post->post_type == 'assessment' ) :
                         echo
                         '<div class="form-element">                        
                             <div class="radio-wrapper">
-                                <input class="radio" type="radio" id="option_' . $i . '" name="assessment_question" value="option_' . $i . '"/> 
+                                <input class="radio" type="radio" id="wp_adaptive_assessment_option_' . $i . '" name="assessment_question" value="wp_adaptive_assessment_option_' . $i . '"/> 
                             </div>
                             <div class="clear"></div>
                             <div class="label-wrapper">
-                                <label for="option_' . $i . '">' . get_post_meta( get_the_ID(), 'wp_adaptive_assessment_option_' . $i, true ) . '</label><br>
+                                <label for="wp_adaptive_assessment_option_' . $i . '">' . get_post_meta( get_the_ID(), 'wp_adaptive_assessment_option_' . $i, true ) . '</label><br>
                             </div>
                         </div>';
                     }
@@ -36,15 +36,51 @@ if( $post->post_type == 'assessment' ) :
                 echo '<div class="submit-buttons">';
                 $next_post_link_url = get_permalink( get_adjacent_post(false,'',false)->ID );
                 
-                echo '<a class="submit-button wp-adaptive-button i-dont" href="' . $next_post_link_url .'"/>I don\'t know this</a>';
-                echo '<a class="submit-button wp-adaptive-button i-think" href="' . $next_post_link_url .'"/>I think I know this</a>';
-                echo '<a class="submit-button wp-adaptive-button i-know" href="' . $next_post_link_url .'"/>I know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-dont" id="1" href=""/>I don\'t know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-think" id="2" href=""/>I think I know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-know" id="3" href="' . $next_post_link_url .'"/>I know this</a>';
 
-                echo '</div>'
-                                
+                echo '</div>';  
+
                 ?>
 
             </div>
+
+            <script>
+            
+            function getResponse() { 
+                var ele = document.getElementsByName('assessment_question');                
+                for(i = 0; i < ele.length; i++) { 
+                    if(ele[i].checked) 
+                    return (ele[i].value); 
+                } 
+            } 
+                            
+		
+            // when user clicks the link
+            $('.submit-button').click( function(e) { 
+                e.preventDefault();
+                var confidence = $(this).attr("id");
+                // submit the data
+                $.post(ajax_public.ajaxurl, {
+                    <?php
+                        $post = get_the_id();
+                        $user = wp_get_current_user()->ID;
+                    ?>
+                    nonce:     ajax_public.nonce,
+                    action:    'assessment_submit_statement',
+                    wp_data:    [<?php echo $post . ',' . $user ?>, confidence, getResponse()]                    
+                    
+                }, function(data) {
+                    
+                    // log data
+                    console.log(data);
+                    
+                });
+                
+            });
+            
+            </script>
 
             <?php         
 
