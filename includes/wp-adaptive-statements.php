@@ -140,7 +140,7 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
 
 			$response = $lrs->saveStatement($statement);
 			if ($response->success) {
-				print "Statement sent successfully!\n";				
+                print "Statement sent successfully!\n";                				
 			} else {
 				print "Error statement not sent: " . $response->content . "\n";
 			}            
@@ -314,7 +314,11 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
 
 			$response = $lrs->saveStatement($statement);
 			if ($response->success) {
-				print "Statement sent successfully!\n";				
+                if( $isCorrect ) { 
+                    print "Correct"; 
+                } else { 
+                    print "Incorrect"; 
+                }		
 			} else {
 				print "Error statement not sent: " . $response->content . "\n";
 			}            

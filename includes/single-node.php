@@ -70,7 +70,6 @@ if( $post->post_type == 'node' ) :
                         
                     }, function(data) {
                         
-                        // log data
                         console.log(data);
                         
                     });

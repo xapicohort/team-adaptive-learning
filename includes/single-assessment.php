@@ -31,7 +31,10 @@ if( $post->post_type == 'assessment' ) :
                     }
                  }
                 
-                echo '</form>';  
+                echo '</form>';
+                
+                echo '<div class="assessment-correct">That\'s correct! Sequencing content, hold tight... </div>';
+                echo '<div class="assessment-incorrect">Sorry, that\'s incorrect! Sequencing content, hold tight... </div>';
 
                 echo '<div class="submit-buttons">';
                 $next_post_link_url = get_permalink( get_adjacent_post(false,'',false)->ID );
@@ -75,6 +78,11 @@ if( $post->post_type == 'assessment' ) :
                     
                     // log data
                     console.log(data);
+                    if(data == 'Correct'){
+                        $('.assessment-correct').fadeIn();
+                    } else {
+                        $('.assessment-incorrect').fadeIn();
+                    }
                     
                 });
                 

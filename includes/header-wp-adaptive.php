@@ -78,12 +78,24 @@
                 background-color:red;
             }
 
+            .i-dont:hover{
+                background-color:darkred;
+            }
+
             .i-think{
                 background-color:orange;
             }
 
+            .i-think:hover{
+                background-color:darkorange;
+            }
+
             .i-know{
                 background-color:green;
+            }
+
+            .i-know:hover{
+                background-color:darkgreen;
             }
 
             .submit-buttons{
@@ -126,6 +138,26 @@
 
             .form-element .label-wrapper{   
                 flex-grow: 1;
+            } 
+
+            .assessment-correct{
+                text-align: center;
+                background-color: green;
+                color: white;
+                border: solid 3px darkgreen;
+                padding: 20px;
+                margin-top: 50px;
+                display: none;
+            } 
+
+            .assessment-incorrect{
+                text-align: center;
+                background-color: red;
+                color: white;
+                border: solid 3px darkred;
+                padding: 20px;
+                margin-top: 50px;
+                display: none;
             }  
 
         </style>
