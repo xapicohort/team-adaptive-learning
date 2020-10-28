@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-if ( !class_exists( 'WP_Statement' ) ) {
+if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
 
-    class WP_Statement { 
+    class WP_Adaptive_Statement { 
         
         function __construct() {  
             
@@ -20,12 +20,14 @@ if ( !class_exists( 'WP_Statement' ) ) {
             add_action( 'wp_ajax_assessment_submit_statement', array( $this, 'assessment_submit_statement' ) );
             // ajax hook for non-logged-in users: wp_ajax_nopriv_{action}
             add_action( 'wp_ajax_nopriv_assessment_submit_statement', array( $this, 'assessment_submit_statement' ) );
+            // Add LRS creds file
+            require_once( plugin_dir_path( __FILE__ ).'wp-adaptive-lrs-creds.php' ); 
 
         }
 
-        private $endpoint = 'https://watershedlrs.com/api/organizations/14031/lrs/';
-        private $key = '79f25ad800e96d';
-        private $secret = 'c1b58b6b5fe24a';
+        private $endpoint = 'https://cloud.scorm.com/lrs/F583XZFRS8/sandbox/';
+        private $key = 'yJV2TEVZl38wzLDxXhw';
+        private $secret = 'AzvPZYLo3LsYe5O2UEc';
 
         public function ajax_public_enqueue_scripts( $hook ) {
            
@@ -67,11 +69,11 @@ if ( !class_exists( 'WP_Statement' ) ) {
             check_ajax_referer( 'ajax_public', 'nonce' );
 
 			$lrs = new TinCan\RemoteLRS(
-				$this->endpoint,
+				WP_Adaptive_LRS_Creds::get_endpoint(),
 				// xAPI version
 				'1.0.1',
-				$this->key, //key
-				$this->secret //secret
+				WP_Adaptive_LRS_Creds::get_key(), //key
+				WP_Adaptive_LRS_Creds::get_secret() //secret
             );
             
            $actor = new TinCan\Agent(
@@ -124,7 +126,7 @@ if ( !class_exists( 'WP_Statement' ) ) {
                                 'en-US' => $parent->post_title // need to get name
                             ],
                         ],
-                        'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $parent->post_type . '/' . $parent->ID, // need to get accurate URL
+                        'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $parent->ID, // need to get accurate URL
                         'objectType' => 'Activity'
                     ]
                 ]               
@@ -297,7 +299,7 @@ if ( !class_exists( 'WP_Statement' ) ) {
                                 'en-US' => $parent->post_title // need to get name
                             ],
                         ],
-                        'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $parent->post_type . '/' . $parent->ID, // need to get accurate URL
+                        'id' => 'https://bradyriordan.com/team-adaptive-learning/' . $parent->ID, // need to get accurate URL
                         'objectType' => 'Activity'
                     ]
                 ]               
@@ -326,4 +328,4 @@ if ( !class_exists( 'WP_Statement' ) ) {
     }
 }
 
-new WP_Statement();
+new WP_Adaptive_Statement();

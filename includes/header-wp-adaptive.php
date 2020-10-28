@@ -56,8 +56,7 @@
             }            
 
             .wp-adaptive-button:hover{
-                cursor: pointer;
-                background-color: #4444442b;
+                cursor: pointer;                
             }
             
             .next-button{

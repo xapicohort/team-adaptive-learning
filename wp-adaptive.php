@@ -37,6 +37,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 add_action( 'save_post', array ( $this, 'save_metabox' ) );
                 add_filter( 'manage_node_posts_columns', array( $this, 'set_custom_edit_node_columns' ) );
                 add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );
+                add_action( 'admin_menu', array( $this, 'add_taxonomies_to_menu' ) );
 
             }
 
@@ -51,7 +52,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
             require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );  
-            require_once( plugin_dir_path( __FILE__ ).'/includes/wp-statements.php' );           
+            require_once( plugin_dir_path( __FILE__ ).'/includes/wp-adaptive-statements.php' );           
 
         }
 
@@ -885,7 +886,29 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
 
             }
 
-        }  
+        } 
+        
+        public function add_taxonomies_to_menu(){
+
+            add_submenu_page(
+                'wp-adaptive', 
+                'Topics', 
+                'Topics (Taxonomy)', 
+                'edit_posts', 
+                'edit-tags.php?taxonomy=topics',
+                false 
+            );
+        
+            add_submenu_page(
+                'wp-adaptive', 
+                'Expert Model Items', 
+                'Expert Model Items (Taxonomy)', 
+                'edit_posts', 
+                'edit-tags.php?taxonomy=expert-model-item',
+                false 
+            );
+
+    }
         
     }
 

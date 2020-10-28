@@ -4,6 +4,8 @@
  * TEMPLATE NAME: SINGLE-NODE
  */
 
+require_once( plugin_dir_path( __FILE__ ).'wp-adaptive-lrs-creds.php' ); 
+
 if( $post->post_type == 'node' ) :
 
     if ( have_posts() ) : 
