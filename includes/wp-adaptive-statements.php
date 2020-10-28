@@ -25,10 +25,6 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
 
         }
 
-        private $endpoint = 'https://cloud.scorm.com/lrs/F583XZFRS8/sandbox/';
-        private $key = 'yJV2TEVZl38wzLDxXhw';
-        private $secret = 'AzvPZYLo3LsYe5O2UEc';
-
         public function ajax_public_enqueue_scripts( $hook ) {
            
             // define script url
@@ -219,11 +215,11 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
             check_ajax_referer( 'ajax_public', 'nonce' );
 
 			$lrs = new TinCan\RemoteLRS(
-				$this->endpoint,
+				WP_Adaptive_LRS_Creds::get_endpoint(),
 				// xAPI version
 				'1.0.1',
-				$this->key, //key
-				$this->secret //secret
+				WP_Adaptive_LRS_Creds::get_key(), //key
+				WP_Adaptive_LRS_Creds::get_secret() //secret
             );
             
            $actor = new TinCan\Agent(
