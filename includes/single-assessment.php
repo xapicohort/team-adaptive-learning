@@ -41,7 +41,7 @@ if( $post->post_type == 'assessment' ) :
                 
                 echo '<a class="submit-button wp-adaptive-button i-dont" id="1" href=""/>I don\'t know this</a>';
                 echo '<a class="submit-button wp-adaptive-button i-think" id="2" href=""/>I think I know this</a>';
-                echo '<a class="submit-button wp-adaptive-button i-know" id="3" href="' . $next_post_link_url .'"/>I know this</a>';
+                echo '<a class="submit-button wp-adaptive-button i-know" id="3" href=""/>I know this</a>';
 
                 echo '</div>';  
 

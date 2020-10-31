@@ -47,6 +47,11 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
     
         }
 
+        private function get_object_id( $post ){
+            $object_id = WP_Adaptive_LRS_Creds::get_options()['object_id_format'] . $post->post_type . '/' . $post->ID;
+            return $object_id;
+        }
+
 
 
         /************************************                 
@@ -85,7 +90,7 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
             );           
             
 			$activity = new TinCan\Activity(
-                ['id' => 'http://bradyriordan/team-adaptive-learning/'. $post->post_type . '/' . $post->ID,
+                ['id' => $this->get_object_id( $post ),
                 'definition' => [
                     'name' => [
                         'en-US' => $post->post_title
@@ -237,7 +242,7 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
                      
             $activityJSON = 
             '{
-                "id": "http://bradyriordan/team-adaptive-learning/' . $post->post_type . '",
+                "id": "' . $this->get_object_id( $post ) . '",
                 "definition": {
                     "name": {
                         "en-US":"' . $post->post_content . '"
