@@ -13,7 +13,7 @@ if( $post->post_type == 'node' ) :
 
             ?>
 
-            <div class="wp-adaptive">
+            <div class="wp-adaptive">                
 
                 <?php
                 echo '<h1>' . get_the_title() . '</h1>';
@@ -58,6 +58,23 @@ if( $post->post_type == 'node' ) :
                 // when user clicks the link
                 $(document).ready( function(event) {  
                                    
+                    //submit the data
+                    $.post(ajax_public.ajaxurl, {
+                        <?php
+                            $post = get_the_id();
+                            $user = wp_get_current_user()->ID;
+                        ?>
+                        nonce:     ajax_public.nonce,
+                        action:    'save_state',
+                        wp_data:    [<?php echo $post . ',' . $user ?>]                    
+                        
+                    }, function(data) {
+                        
+                        console.log(data);
+                        
+                    });                   
+                    
+                    
                     // submit the data
                     $.post(ajax_public.ajaxurl, {
                         <?php

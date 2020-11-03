@@ -39,6 +39,9 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 add_filter( 'manage_assessment_posts_columns', array( $this, 'set_custom_edit_assessment_columns' ) );
                 add_action( 'admin_menu', array( $this, 'add_taxonomies_to_menu' ) );
 
+                // Auto set object id based on plugin settings
+                add_action( 'save_post', array( $this, 'set_object_id' ) );
+
             }
 
             // Taxonomies
@@ -52,7 +55,8 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             add_action( 'the_post' , array ($this, 'modify_post') );
             add_filter( 'single_template', array ( $this, 'post_templates'), 10, 2 );
             require_once( plugin_dir_path(__FILE__) . 'includes/TinCanPHP-master/autoload.php' );  
-            require_once( plugin_dir_path( __FILE__ ).'/includes/wp-adaptive-statements.php' );           
+            require_once( plugin_dir_path( __FILE__ ).'/includes/wp-adaptive-statements.php' );
+            require_once( plugin_dir_path( __FILE__ ).'/includes/wp-adaptive-queries.php' );            
 
         }
 
@@ -72,8 +76,22 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
             if($type == get_post_type($wp_query->post->ID)) 
                 return true;
             return false;
-        }        
+        }   
 
+        // Set object ID based on plugin settings
+        public function set_object_id( $post_id ){
+            
+            $post = get_post( $post_id );
+
+            if('node' == $post->post_type){
+                update_post_meta( $post_id, 'wp_adaptive_object_id', WP_Adaptive_Statement::get_object_id( $post ) );
+            }
+
+            if('assessment' == $post->post_type){
+                update_post_meta( $post_id, 'wp_adaptive_assessment_object_id', WP_Adaptive_Statement::get_object_id( $post ) );
+            }
+            
+        }    
         
         
          /************************************                 
@@ -335,7 +353,7 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 <!-- OBJECT ID -->
                 
                 <label for="wp_adaptive_object_id">Object ID</label><br/>
-                <input class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">               
+                <input disabled class="wp-adaptive-text-input" type="text" name="wp_adaptive_object_id" id="wp_adaptive_object_id" placeholder="Link" length="50" value="<?php echo (get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true)) ? get_post_meta(get_the_ID(), $key = 'wp_adaptive_object_id', $single = true) : ""; ?> ">               
                 </br></br>
 
                 <!-- SOURCE -->
@@ -362,13 +380,22 @@ if ( !class_exists( 'WP_Adaptive' ) ) {
                 $options = [ 
 
                     ['_','Choose...'],
-                    ['text','Text'],  
-                    ['text_image','Text & Image'],  
-                    ['image','Image'],  
-                    ['link','Link'],  
-                    ['video','Video'],
                     ['audio','Audio'],  
-                    ['web_object','Web Object'],    
+                    ['blog','Blog'],  
+                    ['book','Book'],  
+                    ['collaboration','Collaboration'],  
+                    ['discussion','Discussion'],
+                    ['game','Game'],  
+                    ['image','Image'],
+                    ['interaction','Interaction'],
+                    ['link','Link'],
+                    ['printed-book','Printed book'],
+                    ['project','Project'],
+                    ['slide','Slide'],
+                    ['slide-deck','Slide Deck'],
+                    ['task','Task'],
+                    ['video','Video'], 
+                    ['webinar','Webinar']     
 
                 ];
                 

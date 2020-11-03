@@ -47,8 +47,12 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
     
         }
 
-        private function get_object_id( $post ){
-            $object_id = WP_Adaptive_LRS_Creds::get_options()['object_id_format'] . $post->post_type . '/' . $post->ID;
+        public static function get_object_id( $post ){
+            // Add / if not the last character in options field
+            $object_id = WP_Adaptive_LRS_Creds::get_options()['object_id_format'];
+            if( substr( $object_id, -1 ) != '/' ){ $object_id .= '/'; }
+            // Concatenates object id from options field with post type and post id
+            $object_id .=  $post->post_type . '/' . $post->ID;
             return $object_id;
         }
 
@@ -69,15 +73,9 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
             // check nonce  
             check_ajax_referer( 'ajax_public', 'nonce' );
 
-			$lrs = new TinCan\RemoteLRS(
-				WP_Adaptive_LRS_Creds::get_endpoint(),
-				// xAPI version
-				'1.0.1',
-				WP_Adaptive_LRS_Creds::get_key(), //key
-				WP_Adaptive_LRS_Creds::get_secret() //secret
-            );
+		    $lrs = WP_Adaptive_LRS_Creds::get_lrs();
             
-           $actor = new TinCan\Agent(
+            $actor = new TinCan\Agent(
 				['mbox' => 'mailto:' . $user->user_email ]
             );
             
@@ -90,7 +88,7 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
             );           
             
 			$activity = new TinCan\Activity(
-                ['id' => $this->get_object_id( $post ),
+                ['id' => $post->wp_adaptive_object_id,
                 'definition' => [
                     'name' => [
                         'en-US' => $post->post_title
@@ -219,15 +217,9 @@ if ( !class_exists( 'WP_Adaptive_Statement' ) ) {
             // check nonce  
             check_ajax_referer( 'ajax_public', 'nonce' );
 
-			$lrs = new TinCan\RemoteLRS(
-				WP_Adaptive_LRS_Creds::get_endpoint(),
-				// xAPI version
-				'1.0.1',
-				WP_Adaptive_LRS_Creds::get_key(), //key
-				WP_Adaptive_LRS_Creds::get_secret() //secret
-            );
+		    $lrs = WP_Adaptive_LRS_Creds::get_lrs();
             
-           $actor = new TinCan\Agent(
+            $actor = new TinCan\Agent(
 				['mbox' => 'mailto:' . $user->user_email ]
             );
 
